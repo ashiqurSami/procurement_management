@@ -28,42 +28,61 @@ class ProcurementManagement(http.Controller):
     def sign_up(self, **kw):
         return request.render('procurement_management.sign_up_template',{})
 
-    @http.route('/procurement_management/otp',auth='public',methods=['POST'],website=True)
-    def send_otp(self,**kw):
-        """"
-        Generates a One-Time Password (OTP) and sends it to the user's email address.
-        This function performs the following steps:
-        1. Retrieves the email address from the request parameters.
-        2. Checks if the email address is blacklisted.
-        3. If the email is not blacklisted, generates a random 6-digit OTP.
-        4. Sets an expiry time for the OTP (5 days from the current time).
-        5. Creates an email with the OTP and sends it to the specified email address.
-
-        Args:
-            **kw: Arbitrary keyword arguments containing the request parameters.
-        Returns:
-            str: A success message if the OTP is sent successfully.
-            dict: An error message if the email is blacklisted.
+    @http.route('/procurement_management/otp', auth='public', methods=['POST'], website=True)
+    def send_otp(self, **kw):
         """
-        email=kw.get('email')
+        Generates a One-Time Password (OTP) and sends it to the user's email address.
+        """
+        email = kw.get('email')
 
-        blacklisted=request.env['mail.blacklist'].sudo().search([('email','=',email)])
+        blacklisted = request.env['mail.blacklist'].sudo().search([('email', '=', email)])
         if blacklisted:
             return {
-                'status':'error',
-                'message':'This email is blacklisted'
+                'status': 'error',
+                'message': 'This email is blacklisted'
             }
-        otp_code=random.randint(100000,999999)
-        expiry_time=datetime.now()+timedelta(days=5)
 
-        mail_values={
-            'subject':'OTP code',
-            'body_html':f'Your OTP is {otp_code}',
-            'email_to':email,
-            'email_from':'samiashiqur@gmail.com'
+        otp_code = random.randint(100000, 999999)
+        expiry_time = datetime.now() + timedelta(days=5)
+
+        otp_record = request.env['procurement_management.otp_verification'].sudo().create({
+            'email': email,
+            'otp': otp_code,
+            'expiry_time': expiry_time
+        })
+
+        mail_values = {
+            'subject': 'OTP code',
+            'body_html': f'Your OTP is {otp_code}',
+            'email_to': email,
+            'email_from': 'samiashiqur@gmail.com'
         }
 
-        mail_id=request.env['mail.mail'].sudo().create(mail_values)
+        mail_id = request.env['mail.mail'].sudo().create(mail_values)
         mail_id.sudo().send()
 
-        return 'otp sent successfull'
+        # Pass the email to the OTP verification template
+        return request.render('procurement_management.otp_verify_template', {'email': email})
+
+    @http.route('/procurement_management/verify', auth='public', methods=['POST','GET'], website=True)
+    def verify_otp(self, **kw):
+        """
+        Verifies the OTP entered by the user.
+        """
+        email = kw.get('email')
+        otp = kw.get('otp')
+
+        user = request.env['procurement_management.otp_verification'].sudo().search([
+            ('email', '=', email),
+            ('otp', '=', otp),
+            ('is_verified', '=', False),
+            ('expiry_time', '>', datetime.now())
+        ], limit=1)
+
+        if user:
+            user.write({'is_verified': True})
+            return 'OTP verified successfully'
+
+        return 'OTP verification failed'
+
+
