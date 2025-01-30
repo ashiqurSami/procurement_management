@@ -81,8 +81,16 @@ class ProcurementManagement(http.Controller):
 
         if user:
             user.write({'is_verified': True})
-            return 'OTP verified successfully'
+            return request.render('procurement_management.supplier_registration_form_view_template', {})
 
-        return 'OTP verification failed'
+        return 'OTP verified unsuccessfull'
+
+    @http.route('/procurement_management/register', auth='public', methods=['GET'], website=True)
+    def register_supplier(self, **kw):
+        """
+        Registers a supplier.
+        """
+        return request.render('procurement_management.supplier_registration_form_view_template', {})
+
 
 
