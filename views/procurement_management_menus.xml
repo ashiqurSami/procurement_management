@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <menuitem id="procurement_management_menu_root"
+              name="Procurement Management"
+              web_icon="procurement_management,static/description/icon.png"
+              sequence="30">
+        <menuitem id="menu_supplier_registration"
+                  action="action_procurement_management_supplier_registration"
+                  sequence="10"/>
+    </menuitem>
+</odoo>
