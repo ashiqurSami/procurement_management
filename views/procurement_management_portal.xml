@@ -95,7 +95,7 @@
                             </t>
                         </div>
                     </t>
-                    <form id="multi-step-form" method="POST" action="/my/create_supplier" enctype="multipart/form-data">
+                    <form id="multi-step-form" method="POST" action="/procurement_management/register" enctype="multipart/form-data">
                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
 
                         <!-- Step 1: Company Information -->
