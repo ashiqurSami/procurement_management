@@ -22,6 +22,18 @@
             They can recommend, reject or blacklist the application
         </field>
         <field name="category_id" ref="module_category_procurement_management"/>
-        <!-- Remove the implied_ids field -->
     </record>
+
+<!--    <record id="group_procurement_management_reviewer_rule" mode="ir.rule">-->
+<!--        <field name="name">Approver Rule</field>-->
+<!--        <field name="model_id" ref="model_procurement_management_supplier_registration"/>-->
+<!--        <field name="groups" eval="[(4, ref('group_procurement_management_approver'))]"/>-->
+<!--        <field name="domain_force">-->
+<!--            ['|','|',-->
+<!--            ('state','=','recommended'),-->
+<!--            ('state','in',['blacklisted','rejected'])-->
+<!--            ('create_uid','=',user.id)]-->
+<!--        </field>-->
+<!--    </record>-->
+
 </odoo>

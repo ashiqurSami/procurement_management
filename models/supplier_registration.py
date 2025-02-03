@@ -180,14 +180,6 @@ class SupplierRegistration(models.TransientModel):
 
         action=self.env.ref('procurement_management.supplier_reject_blacklist_wizard_action').read()[0]
         action['name']=f'{action_type} Reason'
-
-        # return{
-        #     'name': f'{action_type} Reason',
-        #     'type': 'ir.actions.act_window',
-        #     'res_model': 'reject.blacklist.wizard',
-        #     'view_mode': 'form',
-        #     'target':'new',
-        # }
         return action
 
     def action_submit(self):

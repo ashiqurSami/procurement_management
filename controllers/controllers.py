@@ -6,6 +6,9 @@ from odoo.fields import Datetime
 from odoo.http import request, Response
 from datetime import datetime, timedelta
 
+
+
+
 class ProcurementManagement(http.Controller):
     @http.route('/procurement_management/procurement_management', auth='public')
     def index(self, **kw):
@@ -34,13 +37,20 @@ class ProcurementManagement(http.Controller):
         Generates a One-Time Password (OTP) and sends it to the user's email address.
         """
         email = kw.get('email')
+        error_list=[]
+        success_list=[]
 
-        blacklisted = request.env['mail.blacklist'].sudo().search([('email', '=', email)])
-        if blacklisted:
-            return {
-                'status': 'error',
-                'message': 'This email is blacklisted'
-            }
+        if email:
+            blacklisted = request.env['mail.blacklist'].sudo().search([('email', '=', email)])
+            if blacklisted:
+                error_list.append('This email is blacklisted. Please use another email.')
+
+            already_exists = request.env['res.partner'].sudo().search([('email', '=', kw.get('email'))])
+            if already_exists:
+                error_list.append('This email is in already used. Please use another email.')
+
+        if error_list:
+            return request.render('procurement_management.sign_up_template',{'error_list':error_list})
 
         otp_code = random.randint(100000, 999999)
         expiry_time = datetime.now() + timedelta(days=5)
@@ -60,9 +70,13 @@ class ProcurementManagement(http.Controller):
 
         mail_id = request.env['mail.mail'].sudo().create(mail_values)
         mail_id.sudo().send()
+        success_list.append('OTP has been sent to your email.')
 
         # Pass the email to the OTP verification template
-        return request.render('procurement_management.otp_verify_template', {'email': email})
+        return request.render('procurement_management.otp_verify_template', {
+            'email': email,
+            'success_list': success_list
+        })
 
     @http.route('/procurement_management/verify', auth='public', methods=['POST','GET'], website=True)
     def verify_otp(self, **kw):
@@ -71,6 +85,8 @@ class ProcurementManagement(http.Controller):
         """
         email = kw.get('email')
         otp = kw.get('otp')
+        error_list = []
+        success_list=[]
 
         user = request.env['procurement_management.otp_verification'].sudo().search([
             ('email', '=', email),
@@ -81,9 +97,13 @@ class ProcurementManagement(http.Controller):
 
         if user:
             user.write({'is_verified': True})
-            return request.render('procurement_management.supplier_registration_form_view_template', {})
+            success_list.append('OTP verified. Proceeding to registration.')
+            return request.render('procurement_management.supplier_registration_form_view_template', {
+                'success_list': success_list
+            })
 
-        return 'OTP verified unsuccessfull'
+        error_list.append('Invalid OTP. Please try again.')
+        return request.render('procurement_management.otp_verify_template', {'error_list': error_list})
 
     @http.route('/procurement_management/register', auth='public', methods=['POST','GET'], website=True)
     def register_supplier(self, **kw):
