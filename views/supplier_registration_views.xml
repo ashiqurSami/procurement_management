@@ -5,16 +5,54 @@
         <field name="model">procurement_management.supplier.registration</field>
         <field name="arch" type="xml">
             <form string="Supplier Registration">
+                <header>
+                    <button
+                            name="action_submit"
+                            string="Submit"
+                            type="object"
+                            class="oe_highlight"
+                            invisible="state != 'draft'"
+                    />
+
+                    <button
+                            name="action_approve"
+                            string="Approve"
+                            type="object"
+                            class="oe_highlight"
+                            invisible="state != 'recommended'"
+                            groups="procurement_management.group_procurement_management_approver"
+                    />
+
+                    <button
+                            name="action_recommend"
+                            string="Recommend"
+                            type="object"
+                            class="oe_highlight"
+                            invisible="state != 'submitted'"
+                            groups="procurement_management.group_procurement_management_reviewer"
+                    />
+                    <button
+                            name="action_reject_or_blacklist"
+                            string="Reject"
+                            type="object"
+                            class="btn-danger"
+                            invisible="state != 'submitted'"
+                            context="{'rejected':True}"
+                            groups="procurement_management.group_procurement_management_reviewer,procurement_management.group_procurement_management_approver"
+                    />
+                    <button
+                            name="action_reject_or_blacklist"
+                            string="Blacklist"
+                            type="object"
+                            class="btn-danger"
+                            invisible="state != 'submitted'"
+                            context="{'blacklisted':True}"
+                            groups="procurement_management.group_procurement_management_reviewer,procurement_management.group_procurement_management_approver"
+                    />
+
+                    <field name="state" widget="statusbar"/>
+                </header>
                 <sheet>
-                    <header>
-                        <button name="action_submit" string="Submit" type="object" class="oe_highlight"
-                                invisible="state not in ('draft')"/>
-                        <button name="action_approve" string="Approve" type="object" class="oe_highlight"
-                                invisible="state not in ('submitted')"/>
-                        <button name="action_reject" string="Reject" type="object" class="oe_highlight"
-                                invisible="state not in ('submitted')"/>
-                        <field name="state" widget="statusbar"/>
-                    </header>
                     <group>
                         <group>
                             <field name="company_name"/>

@@ -67,8 +67,14 @@ class SupplierRegistration(models.TransientModel):
     bank_letter_indicating_bank_account = fields.Binary(string='Bank Letter indicating Bank Account')
     past_2_years_audited_financial_statements = fields.Binary(string='Past 2 Years Audited Financial Statements')
     other_certifications = fields.Binary(string='Other Certifications')
-    state = fields.Selection(
-        [('draft', 'Draft'), ('submitted', 'Submitted'), ('approved', 'Approved'), ('rejected', 'Rejected')],
+    comments=fields.Text(string="Comments")
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('submitted', 'Submitted'),
+        ('recommended','Recommended') ,
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+        ('blacklisted','Blacklisted')],
         string='State', default='draft')
 
     def action_approve(self):
@@ -141,7 +147,7 @@ class SupplierRegistration(models.TransientModel):
                 'acc_number': self.account_number,
                 'acc_holder_name': self.account_name,
                 'address': self.company_address_as_per_bank,
-             }))
+            }))
             # Check for file fields and add them to vals if present
         file_fields = [
             'trade_license_business_registration',
@@ -166,11 +172,27 @@ class SupplierRegistration(models.TransientModel):
             'company_id': self.env.company.id,
             'groups_id': [(6, 0, self.env.ref('base.group_portal').ids)]
         })
-        self.env.ref('vendor_portal.vendor_registration_confirmation').send_mail(new_supplier.id)
+        # self.env.ref('vendor_portal.vendor_registration_confirmation').send_mail(new_supplier.id)
         self.state = 'approved'
 
-    def action_reject(self):
-        self.state = 'rejected'
+    def action_reject_or_blacklist(self):
+        action_type="Blacklisting" if self.env.context.get('blacklisted') else "Rejection"
+
+        action=self.env.ref('procurement_management.supplier_reject_blacklist_wizard_action').read()[0]
+        action['name']=f'{action_type} Reason'
+
+        # return{
+        #     'name': f'{action_type} Reason',
+        #     'type': 'ir.actions.act_window',
+        #     'res_model': 'reject.blacklist.wizard',
+        #     'view_mode': 'form',
+        #     'target':'new',
+        # }
+        return action
 
     def action_submit(self):
         self.state = 'submitted'
+
+    def action_recommend(self):
+        self.state="recommended"
+

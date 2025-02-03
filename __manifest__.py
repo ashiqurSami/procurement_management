@@ -18,16 +18,22 @@ Long description of module's purpose
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base'],
+    'depends': ['base', 'portal', 'purchase', 'account', 'contacts'],
 
     # always loaded
     'data': [
         'security/ir.model.access.csv',
+        'security/record_rules.xml',
         'views/views.xml',
         'views/templates.xml',
         'views/procurement_management_portal.xml',
         'views/supplier_registration_views.xml',
-        'views/procurement_management_menus.xml'
+        'views/res_partner_bank_inherit_views.xml',
+        'views/res_partner_extended.xml',
+        'views/bank_views_extended.xml',
+        'views/procurement_management_menus.xml',
+        'wizard/supplier_reject_blacklist_wizard.xml',
+
     ],
     # only loaded in demonstration mode
     'demo': [
