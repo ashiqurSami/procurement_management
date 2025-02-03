@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <!-- Wizard Form View -->
+    <record id="supplier_reject_blacklist_wizard_form" model="ir.ui.view">
+        <field name="name">supplier.reject.blacklist.wizard.form</field>
+        <field name="model">reject.blacklist.wizard</field>
+        <field name="arch" type="xml">
+            <form> <!-- Corrected from <from> to <form> -->
+                <group>
+                    <field name="comments" placeholder="Enter your comment here..."/>
+                </group>
+                <footer>
+                    <button string="Confirm" type="object" name="action_confirm" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form> <!-- Corrected from </from> to </form> -->
+        </field>
+    </record>
+
+    <!-- Wizard Action -->
+    <record id="supplier_reject_blacklist_wizard_action" model="ir.actions.act_window">
+        <field name="name">supplier.reject.blacklist.wizard.action</field>
+        <field name="res_model">reject.blacklist.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field> <!-- Add this to open the wizard in a new window -->
+    </record>
+</odoo>
