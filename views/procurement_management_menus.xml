@@ -7,5 +7,25 @@
         <menuitem id="menu_supplier_registration"
                   action="action_procurement_management_supplier_registration"
                   sequence="10"/>
+
+        <menuitem id="menu_supplier_registration_reviewer"
+                  action="action_procurement_management_supplier_registration_reviewer"
+                  sequence="15"/>
     </menuitem>
+
+    <menuitem id="menu_vendor_registration"
+              name="Vendor Registration"
+              parent="purchase.menu_procurement_management"
+              action="action_procurement_management_supplier_registration_reviewer"
+              sequence="10"
+              groups="group_procurement_management_reviewer"
+    />
+    <menuitem id="menu_vendor_approval"
+              name="Vendor Approval"
+              parent="purchase.menu_procurement_management"
+              action="action_procurement_management_supplier_registration"
+              sequence="15"
+              groups="group_procurement_management_approver"
+    />
+
 </odoo>
