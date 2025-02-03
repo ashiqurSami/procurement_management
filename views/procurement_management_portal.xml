@@ -27,6 +27,20 @@
         <template id="sign_up_template" name="Sign Up Page">
             <t t-call="portal.portal_layout">
                 <div class="container d-flex justify-content-center align-items-center vh-100">
+                    <t t-foreach="error_list" t-as="error">
+                        <div class="alert alert-danger" role="alert">
+                            <h4 class="alert-heading">Error!</h4>
+                            <t t-out="error"/>
+                        </div>
+                    </t>
+                    <t t-if="success_list">
+                        <div class="alert alert-success" role="alert">
+                            <h4 class="alert-heading">Success!</h4>
+                            <t t-foreach="success_list" t-as="success">
+                                <t t-out="success"/>
+                            </t>
+                        </div>
+                    </t>
                     <div class="card shadow-lg p-4 rounded-lg"
                          style="max-width: 400px; width: 100%; border-radius: 12px;">
                         <div class="text-center mb-4">
@@ -50,6 +64,20 @@
 
         <template id="otp_verify_template" name="OTP Input Page">
             <t t-call="portal.portal_layout">
+                <t t-foreach="error_list" t-as="error">
+                    <div class="alert alert-danger" role="alert">
+                        <h4 class="alert-heading">Error!</h4>
+                        <t t-out="error"/>
+                    </div>
+                </t>
+                <t t-if="success_list">
+                    <div class="alert alert-success" role="alert">
+                        <h4 class="alert-heading">Success!</h4>
+                        <t t-foreach="success_list" t-as="success">
+                            <t t-out="success"/>
+                        </t>
+                    </div>
+                </t>
                 <t t-set="title">Enter OTP</t>
                 <div class="container d-flex justify-content-center align-items-center vh-100">
                     <div class="card shadow p-4 text-center" style="max-width: 400px; width: 100%;">
@@ -563,6 +591,23 @@
                 <script src="/procurement_management/static/src/js/form_navigation.js">Navigation Script</script>
             </t>
         </template>
+
+        <template id="alert_messages">
+            <t t-if="error_message">
+                <div class="alert alert-danger" role="alert">
+                    <h4 class="alert-heading">Error!</h4>
+                    <t t-out="error_message"/>
+                </div>
+            </t>
+
+            <t t-if="success_message">
+                <div class="alert alert-success" role="alert">
+                    <h4 class="alert-heading">Success!</h4>
+                    <t t-out="success_message"/>
+                </div>
+            </t>
+        </template>
+
 
     </data>
 </odoo>
