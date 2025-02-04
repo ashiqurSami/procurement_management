@@ -1,3 +1,8 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_procurement_management_supplier_registration,procurement_management.supplier.registration,model_procurement_management_supplier_registration,base.group_user,1,1,1,1
 access_procurement_management_reject_blacklist_wizard,procurement_management.reject.blacklist.wizard,model_reject_blacklist_wizard,base.group_user,1,1,1,1
+access_procurement_management_supplier_registration_portal,procurement_management.supplier.registration,model_procurement_management_supplier_registration,base.group_portal,1,1,1,1
+
+
+
+

@@ -5,6 +5,7 @@ from odoo import models, fields, api
 class SupplierRegistration(models.TransientModel):
     _name = 'procurement_management.supplier.registration'
     _description = 'Supplier Registration'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _rec_name = 'company_name'
     _order = 'create_date desc'
 
@@ -67,6 +68,8 @@ class SupplierRegistration(models.TransientModel):
     bank_letter_indicating_bank_account = fields.Binary(string='Bank Letter indicating Bank Account')
     past_2_years_audited_financial_statements = fields.Binary(string='Past 2 Years Audited Financial Statements')
     other_certifications = fields.Binary(string='Other Certifications')
+    reviewer_id = fields.Many2one('res.users', string='Reviewed By')
+    approver_id=fields.Many2one('res.users',string='Approved By')
     comments=fields.Text(string="Comments")
     state = fields.Selection([
         ('draft', 'Draft'),
@@ -167,13 +170,14 @@ class SupplierRegistration(models.TransientModel):
         new_supplier = self.env['res.partner'].create(vals)
         new_user = self.env['res.users'].create({
             'login': self.email,
-            'password': self.email,
+            'password': self.phone,
             'partner_id': new_supplier.id,
             'company_id': self.env.company.id,
             'groups_id': [(6, 0, self.env.ref('base.group_portal').ids)]
         })
-        # self.env.ref('vendor_portal.vendor_registration_confirmation').send_mail(new_supplier.id)
+        self.env.ref('procurement_management.email_template_vendor_registration_confirmation').send_mail(new_supplier.id)
         self.state = 'approved'
+        self.approver_id=self.env.user
 
     def action_reject_or_blacklist(self):
         action_type="Blacklisting" if self.env.context.get('blacklisted') else "Rejection"
@@ -186,5 +190,6 @@ class SupplierRegistration(models.TransientModel):
         self.state = 'submitted'
 
     def action_recommend(self):
+        self.reviewer_id=self.env.user
         self.state="recommended"
 

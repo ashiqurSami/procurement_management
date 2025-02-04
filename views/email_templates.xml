@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-    <odoo>
+<odoo>
     <record id="email_template_form_submitted" model="mail.template">
         <field name="name">Form Submitted Notification</field>
         <field name="model_id" ref="model_procurement_management_supplier_registration"/> <!-- Use your model's technical name -->
@@ -18,6 +18,32 @@
             <p>Please log in to your Odoo account to review the form.</p>
             <p>Thank you,</p>
             <p>${object.company_id.name or 'Your Company'}</p>
+        </field>
+    </record>
+
+    <record id="email_template_vendor_registration_confirmation" model="mail.template">
+        <field name="name">Vendor Registration Success</field>
+        <field name="model_id" ref="model_res_partner"/>
+        <field name="subject">Vendor Registration Successful</field>
+        <field name="email_to">{{object.email}}</field>
+        <field name="body_html" type="html">
+            <h3>Dear
+                <span t-field="object.name"/>
+            </h3>
+            <p>Congratulations! Your Vendor Registration has been successfully completed.</p>
+            <p>You can now log in to your account using the credentials provided below. Please make sure to change your
+                password to something more secure after logging in.
+            </p>
+            <p>
+                <strong>Username:</strong>
+                <span t-field="object.email"/>
+            </p>
+            <p>
+                <strong>Password:</strong>
+                <span t-field="object.phone"/>
+            </p>
+            <p>Thank you for registering with us. We look forward to working with you!</p>
+
         </field>
     </record>
 </odoo>
