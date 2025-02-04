@@ -4,28 +4,22 @@
               name="Procurement Management"
               web_icon="procurement_management,static/description/icon.png"
               sequence="30">
+
         <menuitem id="menu_supplier_registration"
-                  action="action_procurement_management_supplier_registration"
+                  name="Suppliers "
+                  action="action_procurement_management_supplier_registration_base"
                   sequence="10"/>
-
-        <menuitem id="menu_supplier_registration_reviewer"
+        <menuitem id="menu_vendor_registration"
+                  name="Waiting for Review"
                   action="action_procurement_management_supplier_registration_reviewer"
-                  sequence="15"/>
+                  sequence="15"
+                  groups="group_procurement_management_reviewer"
+        />
+        <menuitem id="menu_vendor_approval"
+                  name="Waiting for Approval"
+                  action="action_procurement_management_supplier_registration"
+                  sequence="20"
+                  groups="group_procurement_management_approver"
+        />
     </menuitem>
-
-    <menuitem id="menu_vendor_registration"
-              name="Vendor Registration"
-              parent="purchase.menu_procurement_management"
-              action="action_procurement_management_supplier_registration_reviewer"
-              sequence="10"
-              groups="group_procurement_management_reviewer"
-    />
-    <menuitem id="menu_vendor_approval"
-              name="Vendor Approval"
-              parent="purchase.menu_procurement_management"
-              action="action_procurement_management_supplier_registration"
-              sequence="15"
-              groups="group_procurement_management_approver"
-    />
-
 </odoo>
