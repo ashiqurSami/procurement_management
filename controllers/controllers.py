@@ -159,9 +159,35 @@ class ProcurementManagement(http.Controller):
                     file_vals[field] = kw.get(field).read()
             vals['state'] = 'submitted'
             if not error_list:
+                # Create the supplier registration record
                 new_supplier = request.env['procurement_management.supplier.registration'].sudo().create(vals)
                 if new_supplier:
+                    vals['state'] = 'submitted'
                     success_list.append("Supplier Registered Successfully")
+
+                    # Fetch the "Reviewer" group and its users
+                    reviewer_group = request.env['res.groups'].search([('name', '=', 'Reviewer')], limit=1)
+                    reviewer_group_users = reviewer_group.users
+
+                    # Fetch the email template
+                    #template = request.env.ref('procurement_management.email_template_form_submitted')
+
+                    # Send email to each reviewer
+                    for reviewer in reviewer_group_users:
+                        print(reviewer.email)
+                        print(reviewer.login)
+                        if reviewer.email:# Debugging: Print reviewer's email
+                            mail_values = {
+                                'subject': 'New Registration',
+                                'body_html': f'Hello, New Supplier has been registered. Please review the details.',
+                                'email_to': reviewer.email,
+                                'email_from': 'samiashiqur@gmail.com'
+                            }
+                            mail_id = request.env['mail.mail'].sudo().create(mail_values)
+                            mail_id.sudo().send()
+
+                        # print(reviewer.email)  # Debugging: Print reviewer's email
+                        # template.with_context(reviewer=reviewer).sudo().send_mail(new_supplier.id, force_send=True)
                 if file_vals:
                     new_supplier.write(file_vals)
 

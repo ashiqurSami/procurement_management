@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+    <odoo>
+    <record id="email_template_form_submitted" model="mail.template">
+        <field name="name">Form Submitted Notification</field>
+        <field name="model_id" ref="model_procurement_management_supplier_registration"/> <!-- Use your model's technical name -->
+        <field name="subject">Form Submitted for Review</field>
+        <field name="email_from">samiashiqur@gmail.com</field> <!-- Hardcoded sender email -->
+        <field name="email_to">${ctx.get('reviewer') and ctx.get('reviewer').email or ''}</field>
+        <field name="body_html" type="html">
+            <p>Hello ${reviewer.name},</p>
+            <p>A new supplier registration form has been submitted and requires your review.</p>
+            <p><strong>Form Details:</strong></p>
+            <ul>
+                <li><strong>Supplier Name:</strong> ${object.name}</li>
+                <li><strong>Submitted By:</strong> ${object.create_uid.name}</li>
+                <li><strong>Submission Date:</strong> ${object.create_date}</li>
+            </ul>
+            <p>Please log in to your Odoo account to review the form.</p>
+            <p>Thank you,</p>
+            <p>${object.company_id.name or 'Your Company'}</p>
+        </field>
+    </record>
+</odoo>

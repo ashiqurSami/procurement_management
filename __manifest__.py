@@ -18,7 +18,7 @@ Long description of module's purpose
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'portal', 'purchase', 'account', 'contacts'],
+    'depends': ['base', 'portal', 'purchase', 'account', 'contacts','mail'],
 
     # always loaded
     'data': [
@@ -33,6 +33,7 @@ Long description of module's purpose
         'views/bank_views_extended.xml',
         'views/procurement_management_menus.xml',
         'wizard/supplier_reject_blacklist_wizard.xml',
+        'views/email_templates.xml'
 
     ],
     # only loaded in demonstration mode
