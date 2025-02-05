@@ -170,24 +170,21 @@ class ProcurementManagement(http.Controller):
                     reviewer_group_users = reviewer_group.users
 
                     # Fetch the email template
-                    #template = request.env.ref('procurement_management.email_template_form_submitted')
+                    template = request.env.ref('procurement_management.email_template_form_submitted').sudo()
+                    context={
+                        'name':new_supplier.company_name,
+                        'phone':new_supplier.phone,
+                        'category':new_supplier.company_type_category
+                    }
 
                     # Send email to each reviewer
                     for reviewer in reviewer_group_users:
                         print(reviewer.email)
                         print(reviewer.login)
-                        if reviewer.email:# Debugging: Print reviewer's email
-                            mail_values = {
-                                'subject': 'New Registration',
-                                'body_html': f'Hello, New Supplier has been registered. Please review the details.',
-                                'email_to': reviewer.email,
-                                'email_from': 'samiashiqur@gmail.com'
-                            }
-                            mail_id = request.env['mail.mail'].sudo().create(mail_values)
-                            mail_id.sudo().send()
+                        if reviewer.email:
+                            template.with_context(**context).send_mail(reviewer.id, force_send=True)
 
-                        # print(reviewer.email)  # Debugging: Print reviewer's email
-                        # template.with_context(**reviewer).sudo().send_mail(reviewer.id, force_send=True)
+
                 if file_vals:
                     new_supplier.write(file_vals)
 

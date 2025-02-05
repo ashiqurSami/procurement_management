@@ -28,6 +28,7 @@ Long description of module's purpose
         'views/res_partner_bank_inherit_views.xml',
         'views/res_partner_extended.xml',
         'views/bank_views_extended.xml',
+        # 'views/rfp_views.xml',
         'views/procurement_management_menus.xml',
         'wizard/supplier_reject_blacklist_wizard.xml',
         'views/email_templates.xml',
