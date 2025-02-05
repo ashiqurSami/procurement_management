@@ -187,7 +187,7 @@ class ProcurementManagement(http.Controller):
                             mail_id.sudo().send()
 
                         # print(reviewer.email)  # Debugging: Print reviewer's email
-                        # template.with_context(reviewer=reviewer).sudo().send_mail(new_supplier.id, force_send=True)
+                        # template.with_context(**reviewer).sudo().send_mail(reviewer.id, force_send=True)
                 if file_vals:
                     new_supplier.write(file_vals)
 

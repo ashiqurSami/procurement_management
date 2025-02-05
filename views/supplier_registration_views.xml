@@ -622,23 +622,24 @@
     </record>
 
     <record id="procurement_management_supplier_registration_view_tree_base" model="ir.ui.view">
-        <field name="name">procurement.management.supplier.registration.view.tree.base</field>
-        <field name="model">procurement_management.supplier.registration</field>
-        <field name="arch" type="xml">
-            <tree string="Supplier Registration">
-                <field name="company_name"/>
-                <field name="company_registered_address"/>
-                <field name="company_alternate_address"/>
-                <field name="trade_license_number"/>
-                <field name="tax_identification_number"/>
-                <field name="commencement_date"/>
-                <field name="expiry_date"/>
-                <field name="contact_person_title"/>
-                <field name="contact_email"/>
-                <field name="contact_phone"/>
-            </tree>
-        </field>
-    </record>
+    <field name="name">procurement.management.supplier.registration.view.tree.base</field>
+    <field name="model">procurement_management.supplier.registration</field>
+    <field name="arch" type="xml">
+        <tree string="Supplier Registration">
+            <field name="company_name"/>
+            <field name="trade_license_number"/>
+            <field name="commencement_date"/>
+            <field name="expiry_date"/>
+            <field name="contact_person_title"/>
+            <field name="contact_email"/>
+            <field name="contact_phone"/>
+            <field name="state" decoration-danger="state == 'rejected' or state == 'blacklisted'"
+                                   decoration-success="state == 'approved'"
+                                   decoration-warning="state == 'draft' or state == 'submitted' or state == 'recommended'"/>
+        </tree>
+    </field>
+</record>
+
 
     <record id="procurement_management_supplier_registration_view_kanban" model="ir.ui.view">
         <field name="name">procurement_management.supplier.registration.kanban</field>
