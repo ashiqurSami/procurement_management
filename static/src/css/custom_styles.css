@@ -1,0 +1,44 @@
+/* Apply styling only inside this specific tree view */
+.supplier-registration-tree .state_color::before {
+    content: attr(data-value);
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+/* Draft (Gray) */
+.supplier-registration-tree .state_color[data-value="draft"] {
+    background-color: lightgray;
+    color: black;
+}
+
+/* Submitted (Orange) */
+.supplier-registration-tree .state_color[data-value="submitted"] {
+    background-color: orange;
+    color: white;
+}
+
+/* Recommended (Yellow) */
+.supplier-registration-tree .state_color[data-value="recommended"] {
+    background-color: yellow;
+    color: black;
+}
+
+/* Approved (Green) */
+.supplier-registration-tree .state_color[data-value="approved"] {
+    background-color: green;
+    color: white;
+}
+
+/* Rejected (Red) */
+.supplier-registration-tree .state_color[data-value="rejected"] {
+    background-color: red;
+    color: white;
+}
+
+/* Blacklisted (Black) */
+.supplier-registration-tree .state_color[data-value="blacklisted"] {
+    background-color: black;
+    color: white;
+}
