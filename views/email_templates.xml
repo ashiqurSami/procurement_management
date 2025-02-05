@@ -2,22 +2,21 @@
 <odoo>
     <record id="email_template_form_submitted" model="mail.template">
         <field name="name">Form Submitted Notification</field>
-        <field name="model_id" ref="model_procurement_management_supplier_registration"/> <!-- Use your model's technical name -->
+        <field name="model_id" ref="base.model_res_users"/> <!-- Use your model's technical name -->
         <field name="subject">Form Submitted for Review</field>
         <field name="email_from">samiashiqur@gmail.com</field> <!-- Hardcoded sender email -->
-        <field name="email_to">${ctx.get('reviewer') and ctx.get('reviewer').email or ''}</field>
+        <field name="email_to">{{object.email}}</field>
         <field name="body_html" type="html">
-            <p>Hello ${reviewer.name},</p>
+            <p>Hello <t t-out="object.name or ''"/> </p>
             <p>A new supplier registration form has been submitted and requires your review.</p>
             <p><strong>Form Details:</strong></p>
             <ul>
-                <li><strong>Supplier Name:</strong> ${object.name}</li>
-                <li><strong>Submitted By:</strong> ${object.create_uid.name}</li>
-                <li><strong>Submission Date:</strong> ${object.create_date}</li>
+                <li>Supplier Name: <t t-out="ctx.get('name') or N/A"/></li>
+                <li>Supplier Phone: <t t-out="ctx.get('phone') or N/A"/></li>
+                <li>Submission Date: <t t-out="ctx.get('category') or N/A"/></li>
             </ul>
             <p>Please log in to your Odoo account to review the form.</p>
             <p>Thank you,</p>
-            <p>${object.company_id.name or 'Your Company'}</p>
         </field>
     </record>
 
@@ -25,10 +24,11 @@
         <field name="name">Vendor Registration Success</field>
         <field name="model_id" ref="model_res_partner"/>
         <field name="subject">Vendor Registration Successful</field>
+        <field name="email_from">samiashiqur@gmail.com</field>
         <field name="email_to">{{object.email}}</field>
         <field name="body_html" type="html">
             <h3>Dear
-                <span t-field="object.name"/>
+                <span><t t-out="object.name or N/A"/> </span>
             </h3>
             <p>Congratulations! Your Vendor Registration has been successfully completed.</p>
             <p>You can now log in to your account using the credentials provided below. Please make sure to change your
@@ -36,11 +36,11 @@
             </p>
             <p>
                 <strong>Username:</strong>
-                <span t-field="object.email"/>
+                <t t-out="object.email or N/A"/>
             </p>
             <p>
                 <strong>Password:</strong>
-                <span t-field="object.phone"/>
+                 <t t-out="object.phone or N/A"/>
             </p>
             <p>Thank you for registering with us. We look forward to working with you!</p>
 

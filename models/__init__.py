@@ -6,3 +6,5 @@ from . import supplier_registration
 from . import res_bank_inherit
 from . import res_partner_bank_inherit
 from . import res_partner_inherit
+from . import rfp
+from . import rfp_product_line

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="procurement_management_rfp_view_form" model="ir.ui.view">
+        <field name="name">procurement.rfp.form</field>
+        <field name="model">procurement_management.rfp</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+<!--                    <button name="action_submit" string="Submit" states="draft"/>-->
+<!--                    <button name="action_return_draft" string="Return to Draft" states="submitted"/>-->
+<!--                    <button name="action_recommend" string="Recommend" states="closed"/>-->
+<!--                    <button name="action_approve" string="Approve" states="submitted" groups="procurement_management.group_approver"/>-->
+<!--                    <button name="action_reject" string="Reject" states="submitted" groups="procurement_management.group_approver"/>-->
+<!--                    <button name="action_close" string="Close" states="approved" groups="procurement_management.group_approver"/>-->
+<!--                    <button name="action_accept" string="Accept" states="recommendation" groups="procurement_management.group_approver"/>-->
+                    <field name="status" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="required_date"/>
+<!--                        <field name="total_amount"/>-->
+                        <field name="approved_supplier"/>
+                    </group>
+                    <notebook>
+                        <page string="Product Lines">
+                            <field name="product_line_ids">
+                                <tree>
+<!--                                    <field name="product_ids"/>-->
+                                    <field name="description"/>
+                                    <field name="quantity"/>
+                                    <field name="subtotal"/>
+                                </tree>
+                            </field>
+                        </page>
+<!--                        <page string="RFQ Lines">-->
+<!--                            <field name="rfq_line_ids">-->
+<!--                                <tree>-->
+<!--                                    <field name="partner_id"/>-->
+<!--                                    <field name="expected_delivery_date"/>-->
+<!--                                    <field name="score"/>-->
+<!--                                    <field name="recommended"/>-->
+<!--                                </tree>-->
+<!--                            </field>-->
+<!--                        </page>-->
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="procurement_management_rfp_view_tree" model="ir.ui.view">
+        <field name="name">procurement.rfp.tree</field>
+        <field name="model">procurement_management.rfp</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="state"/>
+                <field name="required_date"/>
+<!--                <field name="total_amount"/>-->
+            </tree>
+        </field>
+    </record>
+</odoo>

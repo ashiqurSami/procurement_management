@@ -42,15 +42,15 @@ class RFP(models.Model):
     )
 
     product_line_ids = fields.One2many(
-        'procurement.rfp.product.line',
+        'procurement_management.rfp.product.line',
         'rfp_id',
         string='Product Lines'
     )
-    rfq_line_ids = fields.One2many(
-        'purchase.order',
-        'rfp_id',
-        string='RFQ Lines'
-    )
+    # rfq_line_ids = fields.One2many(
+    #     'purchase.order',
+    #     'rfp_id',
+    #     string='RFQ Lines'
+    # )
 
 
     # @api.depends('rfq_line_ids.state', 'rfq_line_ids.amount_total')
