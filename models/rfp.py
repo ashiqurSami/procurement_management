@@ -1,15 +1,25 @@
-from odoo import models, fields, api
+from odoo import models, fields, api,_
 
 class RFP(models.Model):
     _name="procurement_management.rfp"
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _log_access = True
+    _rec_name = 'rfp_id_seq'
 
-    name = fields.Char(
-        string='RFP Number',
-        required=True,
-        default=lambda self: self.env['ir.sequence'].next_by_code('procurement.rfp.seq')
-    )
+    name=fields.Char(string='RFP Name',required=True)
+    rfp_id_seq = fields.Char(
+        string="RFP Reference",
+        required=True, copy=False, readonly=True,
+        index='trigram',
+        default=lambda self: _('New'))
+
+    @api.model
+    def create(self, vals):
+        if vals.get('rfp_id_seq', _("New")) == _("New"):
+            vals['rfp_id_seq'] = self.env['ir.sequence'].next_by_code(
+                'rfp.id.sequence') or _("New")
+
+        return super(RFP, self).create(vals)
 
     status = fields.Selection([
         ('draft', 'Draft'),
@@ -30,15 +40,10 @@ class RFP(models.Model):
         'res.currency',
         default=lambda self: self.env.company.currency_id
     )
-    recommended_suppliers = fields.Many2many(
-        'res.partner',
-        compute='_compute_recommended_suppliers'
-    )
 
     approved_supplier = fields.Many2one(
         'res.partner',
         string='Approved Supplier',
-        domain="[('id', 'in', recommended_suppliers)]"
     )
 
     product_line_ids = fields.One2many(
@@ -65,3 +70,4 @@ class RFP(models.Model):
     #         rfp.recommended_suppliers = rfp.rfq_line_ids.filtered(
     #             lambda l: l.recommended
     #         ).mapped('partner_id')
+

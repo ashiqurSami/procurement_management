@@ -21,5 +21,10 @@
                   sequence="20"
                   groups="group_procurement_management_approver"
         />
+        <menuitem id="menu_rfp"
+                  name="RFP"
+                  action="action_procurement_management_rfp"
+                  sequence="25"
+        />
     </menuitem>
 </odoo>
