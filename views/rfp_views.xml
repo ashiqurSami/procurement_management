@@ -6,19 +6,50 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <!--                    <button name="action_submit" string="Submit" states="draft"/>-->
-                    <!--                    <button name="action_return_draft" string="Return to Draft" states="submitted"/>-->
-                    <!--                    <button name="action_recommend" string="Recommend" states="closed"/>-->
-                    <!--                    <button name="action_approve" string="Approve" states="submitted" groups="procurement_management.group_approver"/>-->
-                    <!--                    <button name="action_reject" string="Reject" states="submitted" groups="procurement_management.group_approver"/>-->
-                    <!--                    <button name="action_close" string="Close" states="approved" groups="procurement_management.group_approver"/>-->
-                    <!--                    <button name="action_accept" string="Accept" states="recommendation" groups="procurement_management.group_approver"/>-->
-                    <div class="oe_title">
-                        <field name="rfp_id_seq" string="RFP ID"/>
-                    </div>
+                    <button name="action_submit"
+                            type="object"
+                            string="Submit"
+                            class="btn btn-primary"
+                            invisible="status != 'draft'"
+                            groups="procurement_management.group_procurement_management_reviewer"
+                    />
+
+
+                    <button name="action_return_draft" type="object" string="Return to Draft" class="btn btn-secondary" />
+
+                    <button name="action_recommend" type="object" string="Recommend" class="btn btn-info" />
+                    <button name="action_approve"
+                            type="object"
+                            string="Approve"
+                            class="btn btn-success"
+                            invisible="status !='submitted'"
+                            groups="procurement_management.group_procurement_management_approver"
+                    />
+
+                    <button name="action_reject"
+                            type="object"
+                            string="Reject"
+                            class="btn btn-danger"
+                            invisible="status !='submitted'"
+                            groups="procurement_management.group_procurement_management_approver"
+                    />
+
+                    <button name="action_close"
+                            type="object"
+                            string="Close"
+                            class="btn btn-dark"
+                            invisible="status !='approved'"
+                            groups="procurement_management.group_procurement_management_approver"
+                    />
+
+                    <button name="action_accept" type="object" string="Accept" class="btn btn-success" />
+
                     <field name="status" widget="statusbar"/>
                 </header>
                 <sheet>
+<!--                    <div class="oe_title">-->
+<!--                        <field name="rfp_id_seq" string="RFP ID"/>-->
+<!--                    </div>-->
                     <group>
 
                         <field name="name"/>
