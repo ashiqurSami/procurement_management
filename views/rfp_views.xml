@@ -13,12 +13,14 @@
                     <!--                    <button name="action_reject" string="Reject" states="submitted" groups="procurement_management.group_approver"/>-->
                     <!--                    <button name="action_close" string="Close" states="approved" groups="procurement_management.group_approver"/>-->
                     <!--                    <button name="action_accept" string="Accept" states="recommendation" groups="procurement_management.group_approver"/>-->
-
-                    <field name="rfp_id_seq" string="RFP ID"/>
+                    <div class="oe_title">
+                        <field name="rfp_id_seq" string="RFP ID"/>
+                    </div>
                     <field name="status" widget="statusbar"/>
                 </header>
                 <sheet>
                     <group>
+
                         <field name="name"/>
                         <field name="required_date"/>
                         <field name="approved_supplier"/>
@@ -34,16 +36,16 @@
                                 </tree>
                             </field>
                         </page>
-                        <!--                        <page string="RFQ Lines">-->
-                        <!--                            <field name="rfq_line_ids">-->
-                        <!--                                <tree>-->
-                        <!--                                    <field name="partner_id"/>-->
-                        <!--                                    <field name="expected_delivery_date"/>-->
-                        <!--                                    <field name="score"/>-->
-                        <!--                                    <field name="recommended"/>-->
-                        <!--                                </tree>-->
-                        <!--                            </field>-->
-                        <!--                        </page>-->
+                        <page string="RFQ Lines">
+                            <field name="rfq_line_ids">
+                                <tree>
+                                    <field name="rfp_id"/>
+                                    <field name="expected_delivery_date"/>
+                                    <field name="score"/>
+                                    <field name="recommended"/>
+                                </tree>
+                            </field>
+                        </page>
                     </notebook>
                 </sheet>
                 <div class="oe_chatter">

@@ -13,14 +13,6 @@ class RFP(models.Model):
         index='trigram',
         default=lambda self: _('New'))
 
-    @api.model
-    def create(self, vals):
-        if vals.get('rfp_id_seq', _("New")) == _("New"):
-            vals['rfp_id_seq'] = self.env['ir.sequence'].next_by_code(
-                'rfp.id.sequence') or _("New")
-
-        return super(RFP, self).create(vals)
-
     status = fields.Selection([
         ('draft', 'Draft'),
         ('submitted', 'Submitted'),
@@ -51,11 +43,19 @@ class RFP(models.Model):
         'rfp_id',
         string='Product Lines'
     )
-    # rfq_line_ids = fields.One2many(
-    #     'purchase.order',
-    #     'rfp_id',
-    #     string='RFQ Lines'
-    # )
+    rfq_line_ids = fields.One2many(
+        'purchase.order',
+        'rfp_id',
+        string='RFQ Lines'
+    )
+
+    @api.model
+    def create(self, vals):
+        if vals.get('rfp_id_seq', _("New")) == _("New"):
+            vals['rfp_id_seq'] = self.env['ir.sequence'].next_by_code(
+                'rfp.id.sequence') or _("New")
+
+        return super(RFP, self).create(vals)
 
 
     # @api.depends('rfq_line_ids.state', 'rfq_line_ids.amount_total')

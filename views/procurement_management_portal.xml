@@ -21,6 +21,16 @@
                     <t t-set="config_card" t-value="True"/>
                 </t>
             </xpath>
+            <xpath expr="//div[@id='portal_client_category']" position="inside">
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="icon" t-value="'/sale/static/src/img/bag.svg'"/>
+                    <t t-set="title">Submit Quotations</t>
+                    <t t-set="text">RFQ</t>
+                    <t t-set="url" t-value="'/procurement_management/rfps'"/>
+                    <t t-set="config_card" t-value="True"/>
+                </t>
+            </xpath>
+
         </template>
 
         <!--    sign up template-->
@@ -608,6 +618,53 @@
             </t>
         </template>
 
+        <template id="rfp_list_view_template">
+            <t t-call="portal.portal_layout">
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">RFP</t>
+                </t>
+                <div class="container mt-5">
+                    <div class="row justify-content-center">
+                        <div class="col-md-10">
+                            <h1 class="text-center mb-4">All RFP</h1>
+
+                            <t t-call="portal.portal_table">
+                                <t t-foreach="group_rfps" t-as="group">
+                                    <thead style="background-color: #4A90E2; color: #fff;">
+                                        <tr>
+                                            <th style="width: 20%;">Name</th>
+                                            <th style="width: 30%;">Status</th>
+                                            <th style="width: 15%;">Required Date</th>
+                                            <th style="width: 20%;">RFP ID Seq</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="group['rfps']" t-as="rfp">
+                                            <tr>
+                                                <td>
+                                                    <a t-attf-href="/my/rfps/#{rfp.id}">
+                                                        <t t-esc="rfp.name"/>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="rfp.status"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="rfp.required_date"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="rfp.rfp_id_seq"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </t>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
 
     </data>
 </odoo>
