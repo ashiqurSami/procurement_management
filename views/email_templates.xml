@@ -1,49 +1,68 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-    <record id="email_template_form_submitted" model="mail.template">
-        <field name="name">Form Submitted Notification</field>
-        <field name="model_id" ref="base.model_res_users"/> <!-- Use your model's technical name -->
-        <field name="subject">Form Submitted for Review</field>
-        <field name="email_from">samiashiqur@gmail.com</field> <!-- Hardcoded sender email -->
-        <field name="email_to">{{object.email}}</field>
-        <field name="body_html" type="html">
-            <p>Hello <t t-out="object.name or ''"/> </p>
-            <p>A new supplier registration form has been submitted and requires your review.</p>
-            <p><strong>Form Details:</strong></p>
-            <ul>
-                <li>Supplier Name: <t t-out="ctx.get('name') or N/A"/></li>
-                <li>Supplier Phone: <t t-out="ctx.get('phone') or N/A"/></li>
-                <li>Submission Date: <t t-out="ctx.get('category') or N/A"/></li>
-            </ul>
-            <p>Please log in to your Odoo account to review the form.</p>
-            <p>Thank you,</p>
-        </field>
-    </record>
+    <data>
+        <record id="email_template_form_submitted" model="mail.template">
+            <field name="name">Form Submitted Notification</field>
+            <field name="model_id" ref="base.model_res_users"/> <!-- Use your model's technical name -->
+            <field name="subject">Form Submitted for Review</field>
+            <field name="email_from">samiashiqur@gmail.com</field> <!-- Hardcoded sender email -->
+            <field name="email_to">{{object.email}}</field>
+            <field name="body_html" type="html">
+                <p>Hello <t t-out="object.name or ''"/> </p>
+                <p>A new supplier registration form has been submitted and requires your review.</p>
+                <p><strong>Form Details:</strong></p>
+                <ul>
+                    <li>Supplier Name: <t t-out="ctx.get('name') or N/A"/></li>
+                    <li>Supplier Phone: <t t-out="ctx.get('phone') or N/A"/></li>
+                    <li>Submission Date: <t t-out="ctx.get('category') or N/A"/></li>
+                </ul>
+                <p>Please log in to your Odoo account to review the form.</p>
+                <p>Thank you,</p>
+            </field>
+        </record>
 
-    <record id="email_template_vendor_registration_confirmation" model="mail.template">
-        <field name="name">Vendor Registration Success</field>
-        <field name="model_id" ref="model_res_partner"/>
-        <field name="subject">Vendor Registration Successful</field>
-        <field name="email_from">samiashiqur@gmail.com</field>
-        <field name="email_to">{{object.email}}</field>
-        <field name="body_html" type="html">
-            <h3>Dear
-                <span><t t-out="object.name or N/A"/> </span>
-            </h3>
-            <p>Congratulations! Your Vendor Registration has been successfully completed.</p>
-            <p>You can now log in to your account using the credentials provided below. Please make sure to change your
-                password to something more secure after logging in.
-            </p>
-            <p>
-                <strong>Username:</strong>
-                <t t-out="object.email or N/A"/>
-            </p>
-            <p>
-                <strong>Password:</strong>
-                 <t t-out="object.phone or N/A"/>
-            </p>
-            <p>Thank you for registering with us. We look forward to working with you!</p>
+        <record id="email_template_vendor_registration_confirmation" model="mail.template">
+            <field name="name">Vendor Registration Success</field>
+            <field name="model_id" ref="model_res_partner"/>
+            <field name="subject">Vendor Registration Successful</field>
+            <field name="email_from">samiashiqur@gmail.com</field>
+            <field name="email_to">{{object.email}}</field>
+            <field name="body_html" type="html">
+                <h3>Dear
+                    <span><t t-out="object.name or N/A"/> </span>
+                </h3>
+                <p>Congratulations! Your Vendor Registration has been successfully completed.</p>
+                <p>You can now log in to your account using the credentials provided below. Please make sure to change your
+                    password to something more secure after logging in.
+                </p>
+                <p>
+                    <strong>Username:</strong>
+                    <t t-out="object.email or N/A"/>
+                </p>
+                <p>
+                    <strong>Password:</strong>
+                    <t t-out="object.phone or N/A"/>
+                </p>
+                <p>Thank you for registering with us. We look forward to working with you!</p>
 
-        </field>
-    </record>
+            </field>
+        </record>
+
+        <record id="email_template_rfp_approval" model="mail.template">
+            <field name="name">RFP Approval Notification</field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="subject">New RFP Created</field>
+            <field name="email_from">{{ ctx.get('email_to') }}</field>
+            <field name="email_to">{{object.email}}</field>
+            <field name="body_html" type="html">
+                <p>Hello,</p>
+                <p>A new <strong>Request for Proposal (RFP)</strong> has been created and requires your approval.</p>
+                <p><strong>RFP ID:</strong> <t t-out="ctx.get('rfp_id')"/> </p>
+                <p><strong>RFP Name:</strong> <t t-out="ctx.get('name')"/></p>
+                <p><strong>Created By:</strong> <t t-out="ctx.get('created_by')"/></p>
+                <p>You can review it by clicking the link below:</p>
+                <p>Best Regards,<br/>Your Company</p>
+            </field>
+        </record>
+    </data>
 </odoo>

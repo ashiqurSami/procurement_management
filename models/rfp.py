@@ -57,6 +57,45 @@ class RFP(models.Model):
 
         return super(RFP, self).create(vals)
 
+    def action_submit(self):
+        # Fetch the "Approver" group and its users
+        self.write({'status': 'submitted'})
+        approver_group = self.env['res.groups'].search([('name', '=', 'Approver')], limit=1)
+        approver_group_users = approver_group.users
+
+        # Fetch the email template
+        template = self.env.ref('procurement_management.email_template_rfp_approval')
+
+        context = {
+            'name': self.name,
+            'rfp_id': self.rfp_id_seq,
+            'created_by': self.create_uid.name,
+            'email_to' : self.env.user.company_id.email
+        }
+        print(self.create_uid.name,self.create_uid.id)
+        # Send email to each reviewer
+        for approver in approver_group_users:
+            print(approver.email)
+            if approver.email:
+                template.with_context(**context).send_mail(approver.id, force_send=True)
+
+    def action_recommend(self):
+        pass
+
+    def action_return_draft(self):
+        pass
+
+    def action_approve(self):
+        pass
+
+    def action_reject(self):
+        pass
+
+    def action_close(self):
+        pass
+
+    def action_accept(self):
+        pass
 
     # @api.depends('rfq_line_ids.state', 'rfq_line_ids.amount_total')
     # def _compute_total_amount(self):
