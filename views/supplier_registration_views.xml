@@ -633,7 +633,7 @@
             <field name="contact_person_title"/>
             <field name="contact_email"/>
             <field name="contact_phone"/>
-            <field name="state" decoration-danger="state == 'rejected' or state == 'blacklisted'"
+            <field name="state"  decoration-danger="state == 'rejected' or state == 'blacklisted'"
                                    decoration-success="state == 'approved'"
                                    decoration-warning="state == 'draft' or state == 'submitted' or state == 'recommended'"/>
         </tree>

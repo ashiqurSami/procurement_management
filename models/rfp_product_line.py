@@ -4,7 +4,7 @@ class RFPProductLine(models.Model):
     _name='procurement_management.rfp.product.line'
 
 
-    product_ids=fields.Many2one('product.product',string='Product')
+    product_id=fields.Many2one('product.product',string='Product')
     description=fields.Text(string='Description')
     quantity=fields.Integer(string='Quantity')
     unit_price=fields.Monetary(string='Unit Price')
