@@ -688,6 +688,7 @@
                             <thead class="table-dark">
                                 <tr>
                                     <th>Product</th>
+                                    <th>Image</th>
                                     <th>Description</th>
                                     <th>Quantity</th>
                                     <th>Unit Price</th>
@@ -699,6 +700,18 @@
                                 <t t-foreach="rfp.product_line_ids" t-as="line">
                                     <tr>
                                         <td><t t-esc="line.product_id.name"/></td>
+                                        <td>
+                                            <t t-if="line.product_id.image_1920">
+                                                <img t-att-src="image_data_uri(line.product_id.image_1920)"
+                                                     class="img-thumbnail"
+                                                     style="max-width:80px;"/>
+                                            </t>
+                                            <t t-else="">
+                                                <img src="/web/static/src/img/placeholder.png"
+                                                     class="img-thumbnail"
+                                                     style="max-width:80px;"/>
+                                            </t>
+                                        </td>
                                         <td><t t-esc="line.description"/></td>
                                         <td>
                                             <input type="number" name="unit_price" t-att-value="line.quantity" class="form-control" />

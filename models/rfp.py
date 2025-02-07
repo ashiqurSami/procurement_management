@@ -86,7 +86,7 @@ class RFP(models.Model):
         self.status='draft'
 
     def action_approve(self):
-        pass
+        self.status='approved'
 
     def action_reject(self):
         pass

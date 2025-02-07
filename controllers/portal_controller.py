@@ -6,7 +6,8 @@ from operator import itemgetter
 
 
 class MyRFQPortal(CustomerPortal):
-    @http.route(['/procurement_management/rfps', '/procurement_management/rfps/page/<int:page>'], type='http', auth='user', website=True)
+    @http.route(['/procurement_management/rfps', '/procurement_management/rfps/page/<int:page>'], type='http',
+                auth='user', website=True)
     def rfps_list(self, page=1, sortby=None, search=None, search_in='all', groupby='none', **kw):
         # Sorting options
         searchbar_sortings = {
@@ -24,7 +25,11 @@ class MyRFQPortal(CustomerPortal):
                            'domain': [('rfp_id_seq', 'ilike', search)]}
         }
 
+        # Apply search filters
         search_domain = search_list[search_in]['domain'] if search and search_in in search_list else []
+
+        # Add condition to only include accepted RFPs
+        search_domain.append(('status', '=', 'approved'))
 
         # Default sorting
         if not sortby:
@@ -35,7 +40,7 @@ class MyRFQPortal(CustomerPortal):
             groupby = 'status'
         # Grouping options
         groupby_list = {
-            'none': {'label': _('None'), 'input': ''},  # Added this line
+            'none': {'label': _('None'), 'input': ''},
             'status': {'label': _('Status'), 'input': 'status'},
             'required_date': {'label': _('Required Date'), 'input': 'required_date'},
         }
@@ -46,7 +51,7 @@ class MyRFQPortal(CustomerPortal):
         # Pagination setup
         rfp_obj = request.env['procurement_management.rfp']
         rfp_count = rfp_obj.search_count(search_domain)
-        items_per_page = 5  # Adjust as needed
+        items_per_page = 3  # Adjust as needed
         pager = portal_pager(
             url='/procurement_management/rfps',
             total=rfp_count,
