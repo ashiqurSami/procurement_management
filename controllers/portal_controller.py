@@ -84,10 +84,46 @@ class MyRFQPortal(CustomerPortal):
             'searchbar_groupby': groupby_list,
         })
 
-    @http.route('/procurement_management/rfp/<int:rfp_id>', auth='public', methods=['POST', 'GET'], website=True)
+    @http.route('/procurement_management/rfp/<int:rfp_id>', auth='user', methods=['POST', 'GET'], website=True)
     def rfp_details(self,rfp_id,**kw):
-        rfp=request.env['procurement_management.rfp'].browse(rfp_id)
+        rfp=request.env['procurement_management.rfp'].sudo().browse(rfp_id)
         return request.render('procurement_management.rfp_form_view_template',{'rfp':rfp})
+
+    @http.route(['/procurement_management/rfp/<int:rfp_id>/create_rfp'], type='http',auth='user', website=True)
+    def create_rfq(self,rfp_id,**kw):
+        print(request.env.user.partner_id.id, request.env.user.id)
+        print(kw)
+        rfp=request.env['procurement_management.rfp'].sudo().browse(rfp_id)
+
+        return request.rende('procurement_management.rfq_submit_view_template',{'rfp':rfp})
+
+    @http.route(['/procurement_management/rfp/<int:rfp_id>/submit'], type='http', auth='user',methods=['POST'] ,website=True)
+    def rfp_submit(self, rfp_id, **kw):
+        error_list=[]
+        success_list=[]
+        print(request.env.user.partner_id.id, request.env.user.id)
+        print(kw)
+        rfp=request.env['procurement_management.rfp'].sudo().browse(rfp_id)
+
+        rfq_values={
+            'rfp_id': rfp.id,
+            'partner_id': request.env.user.partner_id.id,
+            'warranty_period': kw.get('warranty_period'),
+        }
+        rfq=request.env['purchase.order'].sudo().create(rfq_values)
+        success_list.append('RFQ submitted successfully.')
+
+        for line in rfp.product_line_ids:
+            rfq_line={
+                'order_id':rfq.id,
+                'product_id':line.product_id.id,
+                'name':line.product_id.name,
+                'price_unit':kw.get(f'order_line_quantity_{line.id}'),
+                'product_qty':kw.get(f'order_line_unit_price_{line.id}')
+            }
+            request.env['purchase.order.line'].sudo().create(rfq_line)
+
+        return request.render('procurement_management.rfq_submit_view_template',{'rfp':rfp,'success_list':success_list})
 
 
 
