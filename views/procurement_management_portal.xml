@@ -642,7 +642,7 @@
                                         <t t-foreach="group['rfps']" t-as="rfp">
                                             <tr>
                                                 <td>
-                                                    <a t-attf-href="/my/rfps/#{rfp.id}">
+                                                    <a t-attf-href="/procurement_management/rfp/#{rfp.id}">
                                                         <t t-esc="rfp.name"/>
                                                     </a>
                                                 </td>
@@ -665,6 +665,67 @@
                 </div>
             </t>
         </template>
+
+
+        <template id="rfp_form_view_template" name="Portal RFP Form">
+            <t t-call="portal.portal_layout">
+                <t t-set="title">Request for Proposal</t>
+                <div class="container">
+                    <div class="card shadow-sm p-4">
+                        <h3 class="text-center text-primary"><t t-esc="rfp.name"/></h3>
+                        <p class="text-muted text-center">Reference: <t t-esc="rfp.rfp_id_seq"/></p>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Required Date:</strong> <t t-esc="rfp.required_date"/>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Status:</strong> <span class="badge bg-info"><t t-esc="rfp.status"/></span>
+                            </div>
+                        </div>
+
+                        <table class="table table-bordered mt-3">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Description</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>Delivery Charges</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="rfp.product_line_ids" t-as="line">
+                                    <tr>
+                                        <td><t t-esc="line.product_id.name"/></td>
+                                        <td><t t-esc="line.description"/></td>
+                                        <td>
+                                            <input type="number" name="unit_price" t-att-value="line.quantity" class="form-control" />
+                                        </td>
+                                        <td>
+                                            <input type="number" name="unit_price" t-att-value="line.unit_price" class="form-control" />
+                                        </td>
+                                        <td>
+                                            <input type="number" name="delivery_charges" t-att-value="line.delivery_charges" class="form-control" />
+                                        </td>
+                                        <td><t t-esc="line.subtotal"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <form action="/submit_rfp" method="post">
+                            <input type="hidden" name="rfp_id" t-att-value="rfp.id"/>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-success">Submit Quotation</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </t>
+        </template>
+
 
     </data>
 </odoo>

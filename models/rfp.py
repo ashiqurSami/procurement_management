@@ -83,7 +83,7 @@ class RFP(models.Model):
         pass
 
     def action_return_draft(self):
-        pass
+        self.status='draft'
 
     def action_approve(self):
         pass

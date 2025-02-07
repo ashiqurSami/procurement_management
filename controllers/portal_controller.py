@@ -79,4 +79,11 @@ class MyRFQPortal(CustomerPortal):
             'searchbar_groupby': groupby_list,
         })
 
+    @http.route('/procurement_management/rfp/<int:rfp_id>', auth='public', methods=['POST', 'GET'], website=True)
+    def rfp_details(self,rfp_id,**kw):
+        rfp=request.env['procurement_management.rfp'].browse(rfp_id)
+        return request.render('procurement_management.rfp_form_view_template',{'rfp':rfp})
+
+
+
  
