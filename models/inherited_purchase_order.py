@@ -9,6 +9,7 @@ class PurchaseOrder(models.Model):
     warranty_period = fields.Integer(string='Warranty (Months)')
     score = fields.Integer()
     recommended = fields.Boolean()
+    
 
 
     # @api.constrains('recommended')

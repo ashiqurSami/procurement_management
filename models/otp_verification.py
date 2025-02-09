@@ -9,3 +9,4 @@ class OTPVerification(models.Model):
     expiry_time=fields.Datetime(string='Expiry Time',required=True)
     is_verified=fields.Boolean(string='Is Verified',default=False)
 
+    

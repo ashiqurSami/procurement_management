@@ -5,7 +5,8 @@ class RFP(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _log_access = True
     _rec_name = 'rfp_id_seq'
-
+     
+    
     name=fields.Char(string='RFP Name',required=True)
     rfp_id_seq = fields.Char(
         string="RFP Reference",
