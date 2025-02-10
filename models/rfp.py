@@ -46,8 +46,17 @@ class RFP(models.Model):
     rfq_line_ids = fields.One2many(
         'purchase.order',
         'rfp_id',
-        string='RFQ Lines'
+        string='RFQ Lines',
+        domain=lambda self: self._get_rfq_domain()
     )
+
+    @api.model
+    def _get_rfq_domain(self):
+        user=self.env.user
+        if user.has_group('procurement_management.group_procurement_management_approver'):
+            return [('recommended','=',True)]
+        return []
+
 
     @api.model
     def create(self, vals):
@@ -73,14 +82,14 @@ class RFP(models.Model):
             'email_to' : self.env.user.company_id.email
         }
         print(self.create_uid.name,self.create_uid.id)
-        # Send email to each reviewer
+        # Send email to each approver
         for approver in approver_group_users:
             print(approver.email)
             if approver.email:
                 template.with_context(**context).send_mail(approver.id, force_send=True)
 
     def action_recommend(self):
-        pass
+        self.status='recommendation'
 
     def action_return_draft(self):
         self.status='draft'
@@ -89,10 +98,10 @@ class RFP(models.Model):
         self.status='approved'
 
     def action_reject(self):
-        pass
+        self.status='rejected'
 
     def action_close(self):
-        pass
+        self.status='closed'
 
     def action_accept(self):
         pass

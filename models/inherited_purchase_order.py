@@ -1,4 +1,6 @@
 from odoo import models, fields, api, exceptions,_
+from odoo.exceptions import ValidationError
+
 
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
@@ -10,11 +12,19 @@ class PurchaseOrder(models.Model):
     score = fields.Integer()
     recommended = fields.Boolean()
 
-
-    # @api.constrains('recommended')
-    # def _check_recommended(self):
-    #     for rfq in self:
-    #         if rfq.recommended and rfq.rfp_id.rfq_line_ids.filtered(lambda l: l.recommended and l.id != rfq.id):
-    #             raise exceptions.ValidationError(_("Only one RFQ line can be recommended per RFP!"))
-    #
+    @api.constrains('recommended', 'partner_id', 'rfp_id')
+    def _check_unique_recommended_per_supplier(self):
+        """Ensure only one RFQ per supplier can be recommended within the same RFP."""
+        for order in self:
+            if order.recommended:
+                existing_recommended = self.search([
+                    ('rfp_id', '=', order.rfp_id.id),
+                    ('partner_id', '=', order.partner_id.id),
+                    ('recommended', '=', True),
+                    ('id', '!=', order.id)  # Exclude the current record in case of updates
+                ])
+                if existing_recommended:
+                    raise ValidationError(_(
+                        f"A company {order.partner_id.name} cannot have more than one recommended RFQ for the same RFP {order.rfp_id.name}."
+                    ))
 

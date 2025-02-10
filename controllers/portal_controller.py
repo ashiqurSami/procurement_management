@@ -109,6 +109,7 @@ class MyRFQPortal(CustomerPortal):
             'rfp_id': rfp.id,
             'partner_id': request.env.user.partner_id.id,
             'warranty_period': kw.get('warranty_period'),
+            'expected_delivery_date': kw.get('expected_delivery_date'),
         }
         rfq=request.env['purchase.order'].sudo().create(rfq_values)
         success_list.append('RFQ submitted successfully.')
