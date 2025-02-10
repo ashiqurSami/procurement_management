@@ -696,7 +696,7 @@
 
                         <!-- Expected Delivery Date -->
                         <label>Expected Delivery Date</label>
-                        <input type="date" name="date_planned" class="form-control" required="required"/>
+                        <input type="date" name="expected_delivery_date" class="form-control" required="required"/>
 
                         <!-- Terms and Conditions -->
                         <label>Terms Conditions</label>
