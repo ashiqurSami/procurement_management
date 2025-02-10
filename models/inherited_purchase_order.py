@@ -28,3 +28,5 @@ class PurchaseOrder(models.Model):
                         f"A company {order.partner_id.name} cannot have more than one recommended RFQ for the same RFP {order.rfp_id.name}."
                     ))
 
+    
+    
