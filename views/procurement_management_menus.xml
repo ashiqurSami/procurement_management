@@ -22,7 +22,7 @@
                   groups="group_procurement_management_approver"
         />
         <menuitem id="menu_rfp"
-                  name="RFP"
+                  name="Request for Purchase"
                   action="action_procurement_management_rfp"
                   sequence="25"
         />

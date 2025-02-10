@@ -120,7 +120,7 @@ class MyRFQPortal(CustomerPortal):
                 'product_id':line.product_id.id,
                 'name':line.product_id.name,
                 'price_unit':kw.get(f'order_line_quantity_{line.id}'),
-                'product_qty':kw.get(f'order_line_unit_price_{line.id}')
+                'product_qty':kw.get(f'order_line_unit_price_{line.id}'),
             }
             request.env['purchase.order.line'].sudo().create(rfq_line)
 

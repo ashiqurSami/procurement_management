@@ -733,13 +733,13 @@
                                         </td>
                                         <td><t t-esc="line.description"/></td>
                                         <td>
-                                            <input type="number" name="quantity" t-attf-name='order_line_quantity_#{line.id}' t-att-value="line.quantity" class="form-control" />
+                                            <t t-esc='line.quantity'/> 
                                         </td>
                                         <td>
                                             <input type="number" name="unit_price" t-attf-name='order_line_unit_price_#{line.id}' t-att-value="line.unit_price" class="form-control" />
                                         </td>
                                         <td>
-                                            <input type="number" name="delivery_charges" t-att-value="line.delivery_charges" class="form-control" />
+                                            <input type="number" name="delivery_charges" t-attf-name='order_line_delivery_charges_#{line.id}' t-att-value="line.delivery_charges" class="form-control" />
                                         </td>
                                         <td><t t-esc="line.subtotal"/></td>
                                     </tr>

@@ -1,4 +1,5 @@
 from odoo import models, fields, api,_
+from odoo.exceptions import ValidationError
 
 class RFP(models.Model):
     _name="procurement_management.rfp"
@@ -19,7 +20,7 @@ class RFP(models.Model):
         ('approved', 'Approved'),
         ('rejected', 'Rejected'),
         ('closed', 'Closed'),
-        ('recommendation', 'Recommendation'),
+        ('recommended', 'Recommended'),
         ('accepted', 'Accepted')
     ], default='draft', tracking=True)
 
@@ -54,8 +55,8 @@ class RFP(models.Model):
     def _get_rfq_domain(self):
         user=self.env.user
         if user.has_group('procurement_management.group_procurement_management_approver'):
-            return [('recommended','=',True)]
-        return []
+            return [('recommended','=',True)] if self.status in ['recommended','accepted'] else [('id', '=', False)]
+
 
 
     @api.model
@@ -89,7 +90,8 @@ class RFP(models.Model):
                 template.with_context(**context).send_mail(approver.id, force_send=True)
 
     def action_recommend(self):
-        self.status='recommendation'
+        self.status='recommended'
+        print(self)
 
     def action_return_draft(self):
         self.status='draft'
@@ -104,7 +106,19 @@ class RFP(models.Model):
         self.status='closed'
 
     def action_accept(self):
-        pass
+        self.status='accepted'
+        rfq=self.env['purchase.order'].search([('rfp_id','=',self.id)])
+        # rfq.write({'state':'purchase'})
+        rfq.button_confirm()
+    
+
+    # @api.constrains('status','rfq_line_ids')    
+    # def _check_at_least_one_recommended_line(self):
+    #         for rfp in self:
+    #             if rfp.status in ('recommended','approved')  and not any(rfq.recommended for rfq in rfp.rfq_line_ids):
+    #                 raise ValidationError(_(
+    #                 f"RFP {rfp.rfp_id_seq} cannot be marked as '{rfp.status}' without at least one recommended RFQ."
+    #             ))
 
     # @api.depends('rfq_line_ids.state', 'rfq_line_ids.amount_total')
     # def _compute_total_amount(self):
