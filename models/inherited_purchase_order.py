@@ -1,3 +1,5 @@
+from tokenize import String
+
 from odoo import models, fields, api, exceptions,_
 from odoo.exceptions import ValidationError
 
@@ -11,6 +13,8 @@ class PurchaseOrder(models.Model):
     warranty_period = fields.Integer(string='Warranty (Months)')
     score = fields.Integer()
     recommended = fields.Boolean()
+    rfp_status=fields.Selection(related='rfp_id.status',store=True,String="RFP Status")
+
 
     @api.constrains('recommended', 'partner_id', 'rfp_id')
     def _check_unique_recommended_per_supplier(self):
@@ -28,5 +32,4 @@ class PurchaseOrder(models.Model):
                         f"A company {order.partner_id.name} cannot have more than one recommended RFQ for the same RFP {order.rfp_id.name}."
                     ))
 
-    
     

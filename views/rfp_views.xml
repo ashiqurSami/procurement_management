@@ -26,9 +26,9 @@
                             type="object"
                             string="Recommend"
                             invisible="status != 'closed'"
-                            class="btn btn-info" 
+                            class="btn btn-info"
                             groups="procurement_management.group_procurement_management_reviewer"
-                            />
+                    />
 
                     <button name="action_approve"
                             type="object"
@@ -54,13 +54,6 @@
                             groups="procurement_management.group_procurement_management_approver"
                     />
 
-                    <button name="action_accept"
-                            type="object"
-                            string="Accept"
-                            invisible="status != 'recommended'"
-                            class="btn btn-success"
-                            groups="procurement_management.group_procurement_management_approver"
-                             />
 
                     <field name="status" widget="statusbar"/>
                 </header>
@@ -69,38 +62,38 @@
                     <!--                        <field name="rfp_id_seq" string="RFP ID"/>-->
                     <!--                    </div>-->
                     <group>
-                        <field name="name" readonly="status == 'submitted'"/>
-                        <field name="required_date" readonly="status == 'submitted'"/>
-                        <field name="approved_supplier" readonly="status == 'submitted'"/>
+                        <field name="name" readonly="status in ('submitted', 'recommended', 'accepted')"/>
+                        <field name="required_date" readonly="status in ('submitted', 'recommended', 'accepted')"/>
+                        <field name="approved_supplier" readonly="status in ('submitted', 'recommended', 'accepted')"/>
                     </group>
 
                     <!--                    product_lines-->
                     <notebook>
                         <page string="Product Lines">
                             <field name="product_line_ids"
-                                   readonly="status == 'submitted'"
-                                   create="status == 'submitted'"
-                                   delete="status == 'submitted'">
-                                <tree editable="Top">
+                                   readonly="status != 'draft'"
+                                   create="status == 'draft'">
+                                <tree editable="top">
                                     <field name="product_id" />
                                     <field name="description"/>
-                                    <field name="quantity"/>                  
+                                    <field name="quantity"/>
                                 </tree>
                             </field>
                         </page>
 
-                        <!--                        RFQ Lines-->
                         <page string="RFQ Lines">
                             <field name="rfq_line_ids"
-                                   readonly="status == 'submitted'"
-                                   create="status == 'submitted'"
-                                   delete="status == 'submitted'">
+                                   readonly="status in ('recommended','accepted')"
+                                   create="status not in ('submitted', 'recommended', 'accepted','closed','approved')"
+                                   delete="status not in ('submitted', 'recommended', 'accepted','closed','approved')">
+
                                 <tree>
                                     <field name="partner_id" />
                                     <field name="expected_delivery_date" />
                                     <field name="score"/>
                                     <field name="warranty_period"/>
-                                    <field name="recommended" widget="boolean_toggle" class="text-right"/>
+                                    <field name="rfp_status" invisible="1" />
+                                    <field name="recommended" widget="boolean_toggle" class="text-right" />
                                 </tree>
                                 <form>
                                     <group>
@@ -111,7 +104,6 @@
                                         <field name="partner_id" readonly="1"/>
                                         <field name="score"/>
                                     </group>
-
                                     <group>
                                         <field name="warranty_period" readonly="1"/>
                                         <field name="recommended" readonly="1"/>
@@ -120,7 +112,7 @@
                                         <page string="RFQ Line Products">
                                             <field name="order_line">
                                                 <tree>
-                                                    <field name="product_id" />
+                                                    <field name="product_id"/>
                                                     <field name="date_approve"/>
                                                     <field name="product_uom_qty"/>
                                                     <field name="price_unit"/>
@@ -128,7 +120,17 @@
                                             </field>
                                         </page>
                                     </notebook>
+                                    <footer>
+                                        <button name="action_accept"
+
+                                                string="Accept"
+
+                                                class="btn btn-success"
+                                                groups="procurement_management.group_procurement_management_approver"
+                                        />
+                                    </footer>
                                 </form>
+
                             </field>
                         </page>
                     </notebook>
