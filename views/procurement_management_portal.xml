@@ -163,8 +163,8 @@
                                                 </select>
                                             </div>
                                             <div class="mb-3">
-                                                <label class="form-label fw-semibold" for="company_registered_address">Company Address</label>
-                                                <input type="text" class="form-control shadow-sm" id="company_registered_address" name="company_registered_address" placeholder="Enter registered address"/>
+                                                <label class="form-label fw-semibold" for="company_address">Company Address</label>
+                                                <input type="text" class="form-control shadow-sm" id="company_address" name="company_address" placeholder="Enter registered address"/>
                                             </div>
                                         </div>
 
@@ -439,13 +439,13 @@
                                     <!-- Name of Signatory (Mandatory) -->
                                     <div class="col-md-6">
                                         <label for="signatory_name" class="form-label fw-semibold">Name of Signatory <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control shadow-sm" id="signatory_name" name="signatory_name" placeholder="Enter signatory name" />
+                                        <input type="file" class="form-control shadow-sm" id="signatory_name" name="signatory_name" accept="image/*" />
                                     </div>
 
                                     <!-- Authorized Signatory (Mandatory) -->
                                     <div class="col-md-6">
                                         <label for="authorized_signatory" class="form-label fw-semibold">Authorized Signatory <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control shadow-sm" id="authorized_signatory" name="authorized_signatory" placeholder="Enter authorized signatory" />
+                                        <input type="file" class="form-control shadow-sm" id="authorized_signatory" name="authorized_signatory" accept="image/*" />
                                     </div>
 
                                     <!-- Company Stamp & Date (Mandatory) -->
@@ -456,19 +456,19 @@
                                     </div>
                                 </div>
 
-                                <!-- Navigation & Submit Buttons -->
+                                
+                            </div>
+
+                         <!-- Navigation & Submit Buttons -->
                                 <div class="mt-4 d-flex justify-content-between">
                                     <button type="button" class="btn btn-secondary" id="prev-5">Previous</button>
                                     <button type="submit" class="btn btn-primary" id="submit-form" disabled="1">Submit</button>
-                                </div>
-                            </div>
-
-
+                                </div>       
                             <!-- Navigation buttons -->
-                            <div class="d-flex justify-content-between mt-4">
+                            <!-- <div class="d-flex justify-content-between mt-4">
                                 <button type="button" class="btn btn-outline-secondary px-4 py-2 rounded-3" id="prev-5">Previous</button>
                                 <button type="submit" class="btn btn-success px-4 py-2 rounded-3 shadow-sm" id="submit-form">Submit</button>
-                            </div>
+                            </div> -->
                         </div>
 
                     </form>
