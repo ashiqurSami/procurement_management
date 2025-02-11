@@ -9,3 +9,4 @@ from . import res_partner_inherit
 from . import rfp
 from . import rfp_product_line
 from . import inherited_purchase_order
+from . import inherit_purchase_order_line
