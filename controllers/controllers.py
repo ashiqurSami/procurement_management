@@ -119,23 +119,33 @@ class ProcurementManagement(http.Controller):
                 'finance_contact_title', 'finance_contact_email', 'finance_contact_phone',
                 'authorized_person_name', 'authorized_person_email', 'authorized_person_phone',
                 'bank_name', 'bank_address', 'bank_swift_code', 'account_name',
-                'account_number', 'iban', 'company_address_as_per_bank', 'client_1_name',
-                'client_1_address', 'client_1_contact_email',
-                'client_1_contact_phone', 'client_2_name',
-                'client_2_contact_email', 'client_2_contact_phone', 'client_3_name',
-                'client_3_address', 'client_3_contact_email',
-                'client_3_contact_phone', 'certification', 'certificate_number',
-                'certifying_body', 'award_date', 'certificate_expiry_date'
+                'account_number', 'iban', 'company_address_as_per_bank', 
+                'client_1_name','client_1_address', 'client_1_contact_email','client_1_contact_phone', 
+                'client_2_name','client_2_address','client_2_contact_email', 'client_2_contact_phone',
+                'client_3_name','client_3_address', 'client_3_contact_email','client_3_contact_phone',
+                'client_4_name','client_4_address', 'client_4_contact_email','client_4_contact_phone',
+                'client_5_name','client_5_address', 'client_5_contact_email','client_5_contact_phone',
+                'certification', 'certificate_number','certifying_body', 'award_date', 'certificate_expiry_date'
             ]
             for key in keys:
                 if kw.get(key):
                     vals[key] = kw.get(key)
-            if kw.get('tax_identification_number') and (len(kw.get('tax_identification_number')) != 15 or not kw.get(
+
+            for i in range(1,6):
+                client_name=kw.get(f"client_{i}_name")
+                client_address=kw.get(f"client_{i}_address")
+                client_contact_email=kw.get(f"client_{i}_contact_email")
+                client_contact_phone=kw.get(f"client_{i}_contact_phone")
+                
+                if (client_address or client_contact_email or client_contact_phone) and not client_name:
+                    error_list.append(f'Client {i} name is madatory, if address, email or phone is provided')
+
+            if kw.get('tax_identification_number') and (len(kw.get('tax_identification_number')) != 16 or not kw.get(
                     'tax_identification_number').isdigit()):
-                error_list.append("Tax Identification Number Should Be Of 15 Digits And All Digits")
-            if kw.get('trade_license_number') and (len(kw.get('trade_license_number')) != 15 or not kw.get(
+                error_list.append("Tax Identification Number Should Be Of 16 Digits And All Digits")
+            if kw.get('trade_license_number') and not (8<=(len(kw.get('trade_license_number'))<13) or not kw.get(
                     'trade_license_number').isdigit()):
-                error_list.append("Trade License Number Should Be Of 15 Digits And All Digits")
+                error_list.append("Trade License Number Should Be Of 8-13 Digits And All Alphanumeric Digits")
             if kw.get('expiry_date') and fields.Date.to_date(kw.get('expiry_date')) <= fields.date.today():
                 error_list.append("Expiry Date Should Be Greater Than Today")
             if not kw.get('company_name'):
@@ -166,7 +176,7 @@ class ProcurementManagement(http.Controller):
                     success_list.append("Supplier Registered Successfully")
 
                     # Fetch the "Reviewer" group and its users
-                    reviewer_group = request.env['res.groups'].search([('name', '=', 'Reviewer')], limit=1)
+                    reviewer_group = request.env['res.groups'].sudo().search([('name', '=', 'Reviewer')], limit=1)
                     reviewer_group_users = reviewer_group.users
 
                     # Fetch the email template

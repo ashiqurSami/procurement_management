@@ -12,8 +12,7 @@ class SupplierRegistration(models.TransientModel):
     company_name = fields.Char(string='Company Name')
     email = fields.Char(string='Company Email')
     phone = fields.Char(string='Company Phone')
-    company_registered_address = fields.Char(string='Company Registered Address')
-    company_alternate_address = fields.Char(string='Company Alternate Address')
+    company_address = fields.Char(string='Company Registered Address')
     company_type_category = fields.Selection([
         ('LLC', 'LLC'),
         ('corporate', 'Corporation'),
@@ -25,39 +24,74 @@ class SupplierRegistration(models.TransientModel):
     tax_identification_number = fields.Char(string='Tax Identification Number')
     commencement_date = fields.Date(string='Commencement Date')
     expiry_date = fields.Date(string='Expiry Date')
+
+    #primary_contact_person
     contact_person_title = fields.Char(string='Contact Person Title')
     contact_email = fields.Char(string='Contact Email')
     contact_phone = fields.Char(string='Contact Phone')
+    contact_address = fields.Char(string='Contact Address')
+
+    #finance_contact_person
     finance_contact_title = fields.Char(string='Finance Contact Title')
     finance_contact_email = fields.Char(string='Finance Contact Email')
     finance_contact_phone = fields.Char(string='Finance Contact Phone')
+    finance_contact_address = fields.Char(string='Finance Contact Address')
+
+    #authorized_contact_person
     authorized_person_name = fields.Char(string='Authorized Person Name')
     authorized_person_email = fields.Char(string='Authorized Person Email')
     authorized_person_phone = fields.Char(string='Authorized Person Phone')
+    authhorized_person_address = fields.Char(string='Authorized Person Address')
+
+    #bank_details
     bank_name = fields.Char(string='Bank Name')
     bank_address = fields.Char(string='Bank Address')
     bank_swift_code = fields.Char(string='Bank Swift Code')
     account_name = fields.Char(string='Account Name')
     account_number = fields.Char(string='Account Number')
     iban = fields.Char(string='IBAN')
-    company_address_as_per_bank = fields.Char(string='Company Address as per Bank')
+
+
+    company_address_as_per_bank = fields.Char(string='Company Address as per Bank') #it might not be needed
+
+    #client_1
     client_1_name = fields.Char(string='Client 1 Name')
     client_1_address = fields.Char(string='Client 1 Address')
     client_1_contact_email = fields.Char(string='Client 1 Contact Email')
     client_1_contact_phone = fields.Char(string='Client 1 Contact Phone')
+
+    #client_2
     client_2_name = fields.Char(string='Client 2 Name')
     client_2_address = fields.Char(string='Client 2 Address')
     client_2_contact_email = fields.Char(string='Client 2 Contact Email')
     client_2_contact_phone = fields.Char(string='Client 2 Contact Phone')
+
+    #client_3
     client_3_name = fields.Char(string='Client 3 Name')
     client_3_address = fields.Char(string='Client 3 Address')
     client_3_contact_email = fields.Char(string='Client 3 Contact Email')
     client_3_contact_phone = fields.Char(string='Client 3 Contact Phone')
+
+    #client_4
+    client_4_name = fields.Char(string='Client 3 Name')
+    client_4_address = fields.Char(string='Client 3 Address')
+    client_4_contact_email = fields.Char(string='Client 3 Contact Email')
+    client_4_contact_phone = fields.Char(string='Client 3 Contact Phone')
+
+    #client_5
+    client_5_name = fields.Char(string='Client 3 Name')
+    client_5_address = fields.Char(string='Client 3 Address')
+    client_5_contact_email = fields.Char(string='Client 3 Contact Email')
+    client_5_contact_phone = fields.Char(string='Client 3 Contact Phone')
+
+    #certifications
     certification = fields.Char(string='Certification')
     certificate_number = fields.Char(string='Certificate Number')
     certifying_body = fields.Char(string='Certifying Body')
     award_date = fields.Date(string='Award Date')
     certificate_expiry_date = fields.Date(string='Certificate Expiry Date')
+
+    #document submission
     trade_license_business_registration = fields.Binary(string='Trade License/Business Registration')
     certificate_of_incorporation = fields.Binary(string='Certificate of Incorporation')
     certificate_of_good_standing = fields.Binary(string='Certificate of Good Standing')
@@ -68,6 +102,7 @@ class SupplierRegistration(models.TransientModel):
     bank_letter_indicating_bank_account = fields.Binary(string='Bank Letter indicating Bank Account')
     past_2_years_audited_financial_statements = fields.Binary(string='Past 2 Years Audited Financial Statements')
     other_certifications = fields.Binary(string='Other Certifications')
+
     reviewer_id = fields.Many2one('res.users', string='Reviewed By')
     approver_id=fields.Many2one('res.users',string='Approved By')
     comments=fields.Text(string="Comments")
@@ -75,9 +110,9 @@ class SupplierRegistration(models.TransientModel):
         ('draft', 'Draft'),
         ('submitted', 'Submitted'),
         ('recommended','Recommended') ,
-        ('approved', 'Approved'),
         ('rejected', 'Rejected'),
-        ('blacklisted','Blacklisted')],
+        ('blacklisted','Blacklisted'),
+        ('approved', 'Approved')],
         string='State', default='draft')
 
     def action_approve(self):
@@ -85,8 +120,7 @@ class SupplierRegistration(models.TransientModel):
             'name': self.company_name or 'N/A',
             'email': self.email or 'N/A',
             'phone': self.phone or 'N/A',
-            'company_registered_address': self.company_registered_address or 'N/A',
-            'company_alternate_address': self.company_alternate_address or 'N/A',
+            'company_address': self.company_address or 'N/A',
             'company_type_category': self.company_type_category or 'N/A',
             'trade_license_number': self.trade_license_number or 'N/A',
             'tax_identification_number': self.tax_identification_number or 'N/A',

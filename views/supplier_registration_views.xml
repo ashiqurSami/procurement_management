@@ -21,32 +21,15 @@
                             class="oe_highlight"
                             invisible="state != 'recommended'"
                             groups="procurement_management.group_procurement_management_approver"
-                    />
-                    <!--                    <button-->
-                    <!--                            name="action_recommend"-->
-                    <!--                            string="Recommend"-->
-                    <!--                            type="object"-->
-                    <!--                            class="oe_highlight"-->
-                    <!--                            invisible="state != 'submitted'"-->
-                    <!--                            groups="procurement_management.group_procurement_management_reviewer"-->
-                    <!--                    />-->
+                    />   
                     <button
                             name="action_reject_or_blacklist"
                             string="Reject"
                             type="object"
                             class="btn-danger"
-                            invisible="state != 'submitted'"
+                            invisible="state != 'recommended'"
                             context="{'rejected':True}"
-                            groups="procurement_management.group_procurement_management_reviewer,procurement_management.group_procurement_management_approver"
-                    />
-                    <button
-                            name="action_reject_or_blacklist"
-                            string="Blacklist"
-                            type="object"
-                            class="btn-danger"
-                            invisible="state != 'submitted'"
-                            context="{'blacklisted':True}"
-                            groups="procurement_management.group_procurement_management_reviewer,procurement_management.group_procurement_management_approver"
+                            groups="procurement_management.group_procurement_management_approver"
                     />
 
                     <field name="state" widget="statusbar"/>
@@ -60,8 +43,8 @@
                             <field name="tax_identification_number"/>
                         </group>
                         <group>
-                            <field name="company_registered_address"/>
-                            <field name="company_alternate_address"/>
+                            <field name="company_address"/>
+                            
                             <field name="commencement_date"/>
                             <field name="expiry_date"/>
                             <field name="create_uid"/>
@@ -179,8 +162,8 @@
         <field name="arch" type="xml">
             <tree string="Supplier Registration">
                 <field name="company_name"/>
-                <field name="company_registered_address"/>
-                <field name="company_alternate_address"/>
+                <field name="company_address"/>
+                
                 <field name="trade_license_number"/>
                 <field name="tax_identification_number"/>
                 <field name="commencement_date"/>
@@ -198,8 +181,7 @@
         <field name="arch" type="xml">
             <tree string="Supplier Registration">
                 <field name="company_name"/>
-                <field name="company_registered_address"/>
-                <field name="company_alternate_address"/>
+                <field name="company_address"/>
                 <field name="trade_license_number"/>
                 <field name="tax_identification_number"/>
                 <field name="commencement_date"/>
@@ -289,7 +271,7 @@
                             class="btn-danger"
                             invisible="state != 'submitted'"
                             context="{'rejected':True}"
-                            groups="procurement_management.group_procurement_management_reviewer,procurement_management.group_procurement_management_approver"
+                            groups="procurement_management.group_procurement_management_reviewer"
                     />
                     <button
                             name="action_reject_or_blacklist"
@@ -298,8 +280,7 @@
                             class="btn-danger"
                             invisible="state != 'submitted'"
                             context="{'blacklisted':True}"
-                            groups="procurement_management.group_procurement_management_reviewer,procurement_management.group_procurement_management_approver"
-                    />
+                            groups="procurement_management.group_procurement_management_reviewer"/>
 
                     <field name="state" widget="statusbar"/>
                 </header>
@@ -312,8 +293,8 @@
                             <field name="tax_identification_number"/>
                         </group>
                         <group>
-                            <field name="company_registered_address"/>
-                            <field name="company_alternate_address"/>
+                            <field name="company_address"/>
+                
                             <field name="commencement_date"/>
                             <field name="expiry_date"/>
                             <field name="create_uid" invisible="True"/>
@@ -502,14 +483,16 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="company_name"/>
+                            <field name="company_name" readonly="state == 'approved'"/>
+                            <field name="phone"/>
+                            <field name="email"/>
                             <field name="company_type_category"/>
                             <field name="trade_license_number"/>
                             <field name="tax_identification_number"/>
                         </group>
                         <group>
-                            <field name="company_registered_address"/>
-                            <field name="company_alternate_address"/>
+                            <field name="company_address"/>
+                           
                             <field name="commencement_date"/>
                             <field name="expiry_date"/>
                             <field name="create_uid"/>
@@ -627,6 +610,8 @@
     <field name="arch" type="xml">
         <tree string="Supplier Registration">
             <field name="company_name"/>
+            <field name="phone"/>
+            <field name="email"/>
             <field name="trade_license_number"/>
             <field name="commencement_date"/>
             <field name="expiry_date"/>
