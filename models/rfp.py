@@ -104,12 +104,6 @@ class RFP(models.Model):
 
     def action_close(self):
         self.status='closed'
-
-    def action_accept(self):
-        self.status='accepted'
-        rfq=self.env['purchase.order'].search([('rfp_id','=',self.id)])
-        # rfq.write({'state':'purchase'})
-        rfq.button_confirm()
     
 
     # @api.constrains('status','rfq_line_ids')    

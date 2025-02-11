@@ -15,7 +15,13 @@ class PurchaseOrder(models.Model):
     recommended = fields.Boolean()
     rfp_status=fields.Selection(related='rfp_id.status',store=True,String="RFP Status")
 
-
+    def action_accept(self):
+            print('action accept')
+            self.rfp_id.status='accepted'
+            rfq=self.env['purchase.order'].search([('rfp_id','=',self.id)])
+            # rfq.write({'state':'purchase'})
+            rfq.button_confirm()
+            
     @api.constrains('recommended', 'partner_id', 'rfp_id')
     def _check_unique_recommended_per_supplier(self):
         """Ensure only one RFQ per supplier can be recommended within the same RFP."""
@@ -31,5 +37,6 @@ class PurchaseOrder(models.Model):
                     raise ValidationError(_(
                         f"A company {order.partner_id.name} cannot have more than one recommended RFQ for the same RFP {order.rfp_id.name}."
                     ))
-
+ 
+    
     
