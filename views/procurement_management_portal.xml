@@ -630,7 +630,7 @@
         </template>
 
         <template id="rfq_submit_view_template" name="RFQ submission form">
-            <t t-call="website.layout">
+            <t t-call="portal.portal_layout">
                 <div class="container mt-5">
                     <div class="row justify-content-center">
                         <div class="col-md-8 text-center">
@@ -639,7 +639,7 @@
                                 <p>Your Request for Quotation (RFQ) has been successfully submitted. Our team will review your request and get back to you shortly.</p>
                                 <!-- <hr> -->
                                 <p class="mb-0">
-                                    <a href="/" class="btn btn-primary">Return to Home</a>
+                                    <a href="/my" class="btn btn-primary">Return to Home</a>
                                 </p>
                             </div>
                         </div>

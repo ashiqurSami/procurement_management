@@ -55,7 +55,7 @@
             <field name="email_from">{{ ctx.get('email_to') }}</field>
             <field name="email_to">{{object.email}}</field>
             <field name="body_html" type="html">
-                <p>Hello,</p>
+                <p>Hello <t t-out="object.name or ''"/>,</p>
                 <p>A new <strong>Request for Proposal (RFP)</strong> has been created and requires your approval.</p>
                 <p><strong>RFP ID:</strong> <t t-out="ctx.get('rfp_id')"/> </p>
                 <p><strong>RFP Name:</strong> <t t-out="ctx.get('name')"/></p>
@@ -73,7 +73,7 @@
             <field name="email_to">{{object.email}}</field>
             <field name="body_html" type="html">
                 <p>Hello,<t t-out="object.name or ''"/></p>
-                <p>A new <strong>Request for Quotation (RFQ)</strong> has been created and requires your recommendation.</p>
+                <p>A new <strong>Request for Quotation (RFQ)</strong> has been created for rfp-<t t-out="ctx.get('rfp_id')"/> and requires your recommendation.</p>
                 <p><strong>RFQ Name:</strong> <t t-out="ctx.get('name')"/> </p>
                 <p><strong>Vendor Name:</strong> <t t-out="ctx.get('partner_id')"/></p>
                 <p><strong>Warranty Period:</strong> <t t-out="ctx.get('warranty_period')"/></p>
@@ -90,9 +90,8 @@
             <field name="email_to">{{object.email}}</field>
             <field name="body_html" type="html">
                 <p>Hello,<t t-out="object.name or ''"/></p>
-                <p>A new <strong>Request for Quotation (RFQ)</strong> has been recommended in the RFQ( <t t-out="ctx.get('name')"/> )and requires your acceptance.</p>
-                <p><strong>RFQ Name:</strong> <t t-out="ctx.get('name')"/> </p>
-                <p><strong>Expected Delivery Date:</strong> <t t-out="ctx.get('expected_delivery_date')"/></p>
+                <p>A new <strong>Request for QuotationS (RFQ)</strong> have been recommended in the RFP( <t t-out="ctx.get('name')"/> )and requires your confirmation.</p>
+                <p><strong>RFP Name:</strong> <t t-out="ctx.get('name')"/> </p>
                 <p><strong>Created By:</strong> <t t-out="ctx.get('created_by')"/></p>
                 <p><strong>Recommended By:</strong> <t t-out="ctx.get('recommended_by')"/></p>
                 <p>You can review it by clicking the link below:</p>
