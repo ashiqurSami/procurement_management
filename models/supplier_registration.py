@@ -158,7 +158,7 @@ class SupplierRegistration(models.TransientModel):
                 'phone': self.finance_contact_phone,
                 'type': 'contact',
             }))
-        for client in range(1, 4):
+        for client in range(1, 6):
             client_name = getattr(self, f'client_{client}_name', None)
             client_address = getattr(self, f'client_{client}_address', None)
             client_email = getattr(self, f'client_{client}_contact_email', None)

@@ -55,11 +55,45 @@
             <field name="email_from">{{ ctx.get('email_to') }}</field>
             <field name="email_to">{{object.email}}</field>
             <field name="body_html" type="html">
-                <p>Hello,</p>
+                <p>Hello <t t-out="object.name or ''"/>,</p>
                 <p>A new <strong>Request for Proposal (RFP)</strong> has been created and requires your approval.</p>
                 <p><strong>RFP ID:</strong> <t t-out="ctx.get('rfp_id')"/> </p>
                 <p><strong>RFP Name:</strong> <t t-out="ctx.get('name')"/></p>
                 <p><strong>Created By:</strong> <t t-out="ctx.get('created_by')"/></p>
+                <p>You can review it by clicking the link below:</p>
+                <p>Best Regards,<br/>Your Company</p>
+            </field>
+        </record>
+
+        <record id="email_template_to_notify_reviewer_upon_quotation_submission" model="mail.template">
+            <field name="name">New RFQ Notification</field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="subject">New RFQ Created</field>
+            <field name="email_from">{{ctx.get('email_from')}}</field>
+            <field name="email_to">{{object.email}}</field>
+            <field name="body_html" type="html">
+                <p>Hello,<t t-out="object.name or ''"/></p>
+                <p>A new <strong>Request for Quotation (RFQ)</strong> has been created for rfp-<t t-out="ctx.get('rfp_id')"/> and requires your recommendation.</p>
+                <p><strong>RFQ Name:</strong> <t t-out="ctx.get('name')"/> </p>
+                <p><strong>Vendor Name:</strong> <t t-out="ctx.get('partner_id')"/></p>
+                <p><strong>Warranty Period:</strong> <t t-out="ctx.get('warranty_period')"/></p>
+                <p>You can review it by clicking the link below:</p>
+                <p>Best Regards,<br/>Your Company</p>
+            </field>
+        </record>
+
+         <record id="email_template_to_notify_approver_upon_recommended_rfq" model="mail.template">
+            <field name="name"> RFQ Recommended Notification</field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="subject"> RFQ Recommended</field>
+            <field name="email_from">{{ctx.get('email_from')}}</field>
+            <field name="email_to">{{object.email}}</field>
+            <field name="body_html" type="html">
+                <p>Hello,<t t-out="object.name or ''"/></p>
+                <p>A new <strong>Request for QuotationS (RFQ)</strong> have been recommended in the RFP( <t t-out="ctx.get('name')"/> )and requires your confirmation.</p>
+                <p><strong>RFP Name:</strong> <t t-out="ctx.get('name')"/> </p>
+                <p><strong>Created By:</strong> <t t-out="ctx.get('created_by')"/></p>
+                <p><strong>Recommended By:</strong> <t t-out="ctx.get('recommended_by')"/></p>
                 <p>You can review it by clicking the link below:</p>
                 <p>Best Regards,<br/>Your Company</p>
             </field>
