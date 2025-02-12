@@ -125,6 +125,8 @@
                                                     <field name="date_approve"/>
                                                     <field name="product_uom_qty"/>
                                                     <field name="price_unit"/>
+                                                    <field name="delivery_charge"/>
+                                                    <field name="price_total"/>
                                                 </tree>
                                             </field>
                                         </page>

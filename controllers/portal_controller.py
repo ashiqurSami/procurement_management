@@ -3,6 +3,7 @@ from odoo.http import request
 from odoo import http, _
 from odoo.tools import groupby as groupbyelem
 from operator import itemgetter
+from ..utils.mail_utils import send_mail_to_reviewer_upon_quotation_submission
 
 
 class MyRFQPortal(CustomerPortal):
@@ -108,6 +109,7 @@ class MyRFQPortal(CustomerPortal):
             'partner_id': request.env.user.partner_id.id,
             'warranty_period': kw.get('warranty_period'),
             'expected_delivery_date': kw.get('expected_delivery_date'),
+            'user_id':rfp.create_uid.id,
         }
         rfq=request.env['purchase.order'].sudo().create(rfq_values)
         success_list.append('RFQ submitted successfully.')
@@ -120,8 +122,10 @@ class MyRFQPortal(CustomerPortal):
                 'product_qty':line.quantity,
                 'price_unit':kw.get(f'order_line_unit_price_{line.id}'),
                 'delivery_charge':kw.get(f'order_line_delivery_charge_{line.id}'),
+                'date_planned':kw.get('expected_delivery_date')
             }
             request.env['purchase.order.line'].sudo().create(rfq_line)
+            send_mail_to_reviewer_upon_quotation_submission(request.env,rfq)
 
         return request.render('procurement_management.rfq_submit_view_template',{'rfp':rfp,'success_list':success_list})
 
