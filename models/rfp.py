@@ -50,6 +50,7 @@ class RFP(models.Model):
         string='RFQ Lines',
         domain=lambda self: self._get_rfq_domain()
     )
+    total_amount=fields.Monetary(string='Total Amount',compute='_compute_total_amount')
 
     @api.model
     def _get_rfq_domain(self):
@@ -90,6 +91,11 @@ class RFP(models.Model):
                 template.with_context(**context).send_mail(approver.id, force_send=True)
 
     def action_recommend(self):
+        if not any(line.recommended for line in self.rfq_line_ids):
+            raise ValidationError(_(
+                f"RFP {self.rfp_id_seq} cannot be marked as 'recommended' without at least one recommended RFQ."
+            ))
+
         self.status='recommended'
         print(self)
 

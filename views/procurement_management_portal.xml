@@ -630,23 +630,23 @@
         </template>
 
         <template id="rfq_submit_view_template" name="RFQ submission form">
-            <t t-foreach="error_list" t-as="error">
-                <div class="alert alert-danger" role="alert">
-                    <h4 class="alert-heading">Error!</h4>
-                    <t t-out="error"/>
-                </div>
-            </t>
-            <t t-if="success_list">
-                <div class="alert alert-success" role="alert">
-                    <h4 class="alert-heading">Success!</h4>
-                    <t t-foreach="success_list" t-as="success">
-                        <t t-out="success"/>
-                    </t>
+            <t t-call="website.layout">
+                <div class="container mt-5">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8 text-center">
+                            <div class="alert alert-success">
+                                <h4 class="alert-heading">RFQ Submitted Successfully!</h4>
+                                <p>Your Request for Quotation (RFQ) has been successfully submitted. Our team will review your request and get back to you shortly.</p>
+                                <!-- <hr> -->
+                                <p class="mb-0">
+                                    <a href="/" class="btn btn-primary">Return to Home</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </t>
         </template>
-
-
     </data>
 </odoo>
 

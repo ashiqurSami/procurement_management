@@ -15,12 +15,17 @@ class PurchaseOrder(models.Model):
     recommended = fields.Boolean()
     rfp_status=fields.Selection(related='rfp_id.status',store=True,String="RFP Status")
 
+
     def action_accept(self):
-            print('action accept')
-            self.rfp_id.status='accepted'
-            rfq=self.env['purchase.order'].search([('rfp_id','=',self.id)])
-            # rfq.write({'state':'purchase'})
-            rfq.button_confirm()
+        self.rfp_id.write({'status': 'accepted','approved_supplier':self.partner_id.id,'total_amount':self.amount_total})
+        self.write({'state': 'purchase','date_approve':fields.Datetime.now()})
+        return{
+            'type':'ir.actions.act_window',
+            'res_model':'procurement_management.rfp',
+            'view_mode':'form',
+            'res_id':self.rfp_id.id,
+            'target':'current',
+        }
             
     @api.constrains('recommended', 'partner_id', 'rfp_id')
     def _check_unique_recommended_per_supplier(self):
@@ -39,4 +44,13 @@ class PurchaseOrder(models.Model):
                     ))
  
     
-    
+    # def create(self, vals):
+    #     print("from model")
+    #     print(self.rfp_id,self.rfp_id.create_uid )
+    #     print(vals.get('rfp_id'))
+    #     if vals.get('rfp_id'):
+    #         rfp=self.env['procurement_management.rfp'].browse(vals['rfp_id'])
+    #         print(rfp, rfp.create_uid)
+    #         self.user_id=rfp.create_uid
+    #         print(self.user_id)
+    #     return super(PurchaseOrder, self).create(vals)

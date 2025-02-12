@@ -5,7 +5,7 @@ class PurchaseOrderLine(models.Model):
 
     delivery_charge=fields.Monetary(string='Delivery Charge')
 
-    @api.depends('product_qty', 'price_unit', 'taxes_id', 'discount')
+    @api.depends('product_qty', 'price_unit', 'taxes_id', 'discount','delivery_charge')
     def _compute_amount(self):
         for line in self:
             tax_results = self.env['account.tax']._compute_taxes([line._convert_to_tax_base_line_dict()])
@@ -14,7 +14,7 @@ class PurchaseOrderLine(models.Model):
             amount_tax = totals['amount_tax']
 
             line.update({
-                'price_subtotal': amount_untaxed,
+                'price_subtotal': amount_untaxed+line.delivery_charge,
                 'price_tax': amount_tax,
-                'price_total': amount_untaxed + amount_tax+line.delivery_charge,
+                'price_total': amount_untaxed +amount_tax+line.delivery_charge,
             })
