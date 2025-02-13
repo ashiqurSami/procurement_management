@@ -98,5 +98,55 @@
                 <p>Best Regards,<br/>Your Company</p>
             </field>
         </record>
+
+        <record id="email_template_to_notify_reviewer_upon_rfp_approval" model="mail.template">
+            <field name="name"> RFP Approval Notification</field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="subject"> RFP Approval</field>
+            <field name="email_from">{{ctx.get('email_from')}}</field>
+            <field name="email_to">{{ctx.get('email_to')}}</field>
+            <field name="body_html" type="html">
+                <p>Hello,<t t-out="object.name or ''"/></p>
+                <p>Your requested <strong>Request for Proposal (RFP)</strong> have been approved.</p>
+                <p><strong>RFP ID:</strong> <t t-out="ctx.get('rfp_id')"/> </p>
+                <p><strong>Created By:</strong> <t t-out="ctx.get('created_by')"/></p>
+                <p><strong>Approved By:</strong> <t t-out="ctx.get('approved_by')"/></p>
+                <p>You can review it by clicking the link below:</p>
+                <p>Best Regards,<br/>Your Company</p>
+            </field>
+        </record>
+
+        <record id="email_template_to_notify_supplier_upon_rfp_publish_and_approval" model="mail.template">
+            <field name="name"> RFP Publish Notification</field>
+            <field name="model_id" ref="model_res_partner"/>
+            <field name="subject"> RFP Publish</field>
+            <field name="email_from">{{ctx.get('email_from')}}</field>
+            <field name="email_to">{{object.email}}</field>
+            <field name="body_html" type="html">
+                <p>Hello,<t t-out="object.name or ''"/></p>
+                <p>A new <strong>Request for Proposal (RFP)</strong> have been published in the portal view</p>
+                <p><strong>RFP ID:</strong> <t t-out="ctx.get('rfp_id')"/> </p>
+                <p><strong>Required Date:</strong> <t t-out="ctx.get('required_date')"/></p>
+                <p>You can review it by clicking the link below:</p>
+                <a href="http://localhost:8017/procurement_management/rfps"/>
+                <p>Best Regards,<br/>Your Company</p>
+            </field>
+        </record>
+
+         <record id="email_template_to_notify_reviewer_upon_rfp_rejection" model="mail.template">
+            <field name="name"> RFP Reject Notification</field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="subject"> RFP Rejection</field>
+            <field name="email_from">{{ctx.get('email_from')}}</field>
+            <field name="email_to">{{object.email}}</field>
+            <field name="body_html" type="html">
+                <p>Hello,<t t-out="object.name or ''"/></p>
+                <p>This <strong>Request for Proposal (RFP)</strong> have been rejected. The provided information are ambiguous</p>
+                <p><strong>RFP ID:</strong> <t t-out="ctx.get('rfp_id')"/> </p>
+                <p>You can review it by clicking the link below:</p>
+                <a href="http://localhost:8017/procurement_management/rfps">Click Here</a>
+                <p>Best Regards,<br/>Your Company</p>
+            </field>
+        </record>
     </data>
 </odoo>

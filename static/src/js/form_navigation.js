@@ -105,3 +105,35 @@ document.addEventListener("DOMContentLoaded", function () {
 document.getElementById('declaration_checkbox').addEventListener('change', function () {
         document.getElementById('submit-form').disabled = !this.checked;
     });
+
+document.addEventListener('DOMContentLoaded', function() {
+                        document.querySelectorAll('table tbody tr').forEach(function(row) {
+                            // Extract quantity from the fourth cell (index 3)
+                            const quantityCell = row.cells[3];
+                            const quantity = parseInt(quantityCell.textContent.trim(), 10) || 0;
+
+                            // Get unit price and delivery charge inputs
+                            const inputs = row.querySelectorAll('input[type="number"]');
+                            if (inputs.length < 2) return;
+                            const unitPriceInput = inputs[0];
+                            const deliveryChargeInput = inputs[1];
+
+                            // Subtotal cell is the seventh column (index 6)
+                            const subtotalCell = row.cells[6];
+
+                            // Function to calculate and update subtotal
+                            function updateSubtotal() {
+                                const unitPrice = parseFloat(unitPriceInput.value) || 0;
+                                const deliveryCharge = parseFloat(deliveryChargeInput.value) || 0;
+                                const subtotal = (quantity * unitPrice) + deliveryCharge;
+                                subtotalCell.textContent = subtotal.toFixed(2);
+                            }
+
+                            // Attach event listeners to inputs
+                            unitPriceInput.addEventListener('input', updateSubtotal);
+                            deliveryChargeInput.addEventListener('input', updateSubtotal);
+
+                            // Calculate initial subtotal on page load
+                            updateSubtotal();
+                        });
+                    });

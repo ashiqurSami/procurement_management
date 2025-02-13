@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import random
-
+import base64
 from odoo import api, http, modules,fields
 from odoo.fields import Datetime
 from odoo.http import request, Response
@@ -166,7 +166,7 @@ class ProcurementManagement(http.Controller):
             file_vals = {}
             for field in file_fields:
                 if kw.get(field):
-                    file_vals[field] = kw.get(field).read()
+                    file_vals[field] = base64.b64encode(kw.get(field).read())
             vals['state'] = 'submitted'
             if not error_list:
                 # Create the supplier registration record

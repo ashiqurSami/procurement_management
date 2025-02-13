@@ -1,6 +1,8 @@
 from odoo import models, fields, api,_
 from odoo.exceptions import ValidationError
-from ..utils.mail_utils import send_mail_to_approver_upon_recommended_rfq
+from ..utils.mail_utils import notify_approver_upon_recommended_rfq, notify_reviewer_upon_rfp_approval, \
+    notify_supplier_upon_rfp_approval_and_publish, notify_reviewer_upon_rfp_rejection
+
 
 class RFP(models.Model):
     _name="procurement_management.rfp"
@@ -97,20 +99,20 @@ class RFP(models.Model):
                 f"RFP {self.rfp_id_seq} cannot be marked as 'recommended' without at least one recommended RFQ."
             ))
         self.write({'status': 'recommended'})
-        send_mail_to_approver_upon_recommended_rfq(self)
-
-
-        self.status='recommended'
-        print(self)
+        notify_approver_upon_recommended_rfq(self)
+        # self.status='recommended'
 
     def action_return_draft(self):
         self.status='draft'
 
     def action_approve(self):
         self.status='approved'
+        notify_reviewer_upon_rfp_approval(self)
+        notify_supplier_upon_rfp_approval_and_publish(self)
 
     def action_reject(self):
         self.status='rejected'
+        notify_reviewer_upon_rfp_rejection(self)
 
     def action_close(self):
         self.status='closed'
