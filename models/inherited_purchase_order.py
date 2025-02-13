@@ -1,5 +1,4 @@
 from tokenize import String
-
 from odoo import models, fields, api, exceptions,_
 from odoo.exceptions import ValidationError
 
@@ -45,13 +44,22 @@ class PurchaseOrder(models.Model):
                     ))
  
     
-    # def create(self, vals):
-    #     print("from model")
-    #     print(self.rfp_id,self.rfp_id.create_uid )
-    #     print(vals.get('rfp_id'))
-    #     if vals.get('rfp_id'):
-    #         rfp=self.env['procurement_management.rfp'].browse(vals['rfp_id'])
-    #         print(rfp, rfp.create_uid)
-    #         self.user_id=rfp.create_uid
-    #         print(self.user_id)
-    #     return super(PurchaseOrder, self).create(vals)
+    @api.depends('order_line.price_total', 'order_line.delivery_charge')
+    def _amount_all(self):
+        for order in self:
+            order_lines = order.order_line.filtered(lambda x: not x.display_type)
+            if order.company_id.tax_calculation_rounding_method == 'round_globally':
+                tax_results = self.env['account.tax']._compute_taxes([
+                    line._convert_to_tax_base_line_dict()
+                    for line in order_lines
+                ])
+                totals = tax_results['totals']
+                amount_untaxed = totals.get(order.currency_id, {}).get('amount_untaxed', 0.0)
+                amount_tax = totals.get(order.currency_id, {}).get('amount_tax', 0.0)
+            else:
+                amount_untaxed = sum(order_lines.mapped('price_subtotal'))  # price_subtotal already includes delivery charge
+                amount_tax = sum(order_lines.mapped('price_tax'))
+
+            order.amount_untaxed = amount_untaxed
+            order.amount_tax = amount_tax
+            order.amount_total = amount_untaxed + amount_tax

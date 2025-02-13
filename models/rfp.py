@@ -10,7 +10,7 @@ class RFP(models.Model):
     _log_access = True
     _rec_name = 'rfp_id_seq'
 
-    name=fields.Char(string='RFP Name',required=True)
+    name=fields.Char(string='RFP Name')
     rfp_id_seq = fields.Char(
         string="RFP Reference",
         required=True, copy=False, readonly=True,

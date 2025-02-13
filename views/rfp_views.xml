@@ -62,7 +62,7 @@
                     <!--                        <field name="rfp_id_seq" string="RFP ID"/>-->
                     <!--                    </div>-->
                     <group>
-                        <field name="name" readonly="status in ('submitted', 'recommended', 'accepted')"/>
+                        <field name="name" readonly="status in ('submitted', 'recommended', 'accepted')" invisible="1"/>
                         <field name="required_date" readonly="status in ('submitted', 'recommended', 'accepted')"/>
                         <field name="approved_supplier" readonly="status in ('submitted', 'recommended', 'accepted')"/>
                     </group>

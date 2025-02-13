@@ -33,6 +33,7 @@ Long description of module's purpose
         'views/procurement_management_menus.xml',
         'wizard/supplier_reject_blacklist_wizard.xml',
         'views/email_templates.xml',
+        'views/purchase_order_inherit_views.xml'
     ],
 
     # Only loaded in demonstration mode

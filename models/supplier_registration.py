@@ -109,7 +109,7 @@ class SupplierRegistration(models.TransientModel):
     state = fields.Selection([
         ('draft', 'Draft'),
         ('submitted', 'Submitted'),
-        ('recommended','Recommended') ,
+        ('reviewed','Reviewed') ,
         ('rejected', 'Rejected'),
         ('blacklisted','Blacklisted'),
         ('approved', 'Approved')],
@@ -225,5 +225,5 @@ class SupplierRegistration(models.TransientModel):
 
     def action_recommend(self):
         self.reviewer_id=self.env.user
-        self.state="recommended"
+        self.state="reviewed"
 
