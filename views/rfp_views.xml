@@ -73,7 +73,7 @@
                             <field name="product_line_ids"
                                    readonly="status != 'draft'"
                                    create="status == 'draft'">
-                                <tree editable="top">
+                                <tree editable="bottom">
                                     <field name="product_id" />
                                     <field name="description"/>
                                     <field name="quantity"/>
@@ -131,14 +131,11 @@
                                             </field>
                                         </page>
                                     </notebook>
-                                    
                                 </form>
-
                             </field>
                         </page>
                     </notebook>
                 </sheet>
-
                 <div class="oe_chatter">
                     <field name="message_ids" widget="mail_thread"/>
                 </div>

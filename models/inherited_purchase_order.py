@@ -19,6 +19,7 @@ class PurchaseOrder(models.Model):
     def action_accept(self):
         self.rfp_id.write({'status': 'accepted','approved_supplier':self.partner_id.id,'total_amount':self.amount_total})
         self.write({'state': 'purchase','date_approve':fields.Datetime.now()})
+        print(self.rfp_id.rfq_line_ids)
         return{
             'type':'ir.actions.act_window',
             'res_model':'procurement_management.rfp',

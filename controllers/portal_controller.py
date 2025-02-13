@@ -3,7 +3,7 @@ from odoo.http import request
 from odoo import http, _
 from odoo.tools import groupby as groupbyelem
 from operator import itemgetter
-from ..utils.mail_utils import send_mail_to_reviewer_upon_quotation_submission
+from ..utils.mail_utils import notify_reviewer_upon_quotation_submission
 
 
 class MyRFQPortal(CustomerPortal):
@@ -125,7 +125,7 @@ class MyRFQPortal(CustomerPortal):
                 'date_planned':kw.get('expected_delivery_date')
             }
             request.env['purchase.order.line'].sudo().create(rfq_line)
-            send_mail_to_reviewer_upon_quotation_submission(request.env,rfq)
+            notify_reviewer_upon_quotation_submission(request,rfq)
 
         return request.render('procurement_management.rfq_submit_view_template',{'rfp':rfp,'success_list':success_list})
 
