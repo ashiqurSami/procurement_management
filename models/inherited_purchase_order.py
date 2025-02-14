@@ -42,24 +42,44 @@ class PurchaseOrder(models.Model):
                     raise ValidationError(_(
                         f"A company {order.partner_id.name} cannot have more than one recommended RFQ for the same RFP {order.rfp_id.name}."
                     ))
- 
-    
-    @api.depends('order_line.price_total', 'order_line.delivery_charge')
-    def _amount_all(self):
+
+
+    # @api.depends('order_line.price_total', 'order_line.delivery_charge')
+    # def _amount_all(self):
+    #     for order in self:
+    #         order_lines = order.order_line.filtered(lambda x: not x.display_type)
+    #         if order.company_id.tax_calculation_rounding_method == 'round_globally':
+    #             tax_results = self.env['account.tax']._compute_taxes([
+    #                 line._convert_to_tax_base_line_dict()
+    #                 for line in order_lines
+    #             ])
+    #             totals = tax_results['totals']
+    #             amount_untaxed = totals.get(order.currency_id, {}).get('amount_untaxed', 0.0)
+    #             amount_tax = totals.get(order.currency_id, {}).get('amount_tax', 0.0)
+    #         else:
+    #             amount_untaxed = sum(order_lines.mapped('price_subtotal'))  # price_subtotal already includes delivery charge
+    #             amount_tax = sum(order_lines.mapped('price_tax'))
+    #
+    #         order.amount_untaxed = amount_untaxed
+    #         order.amount_tax = amount_tax
+    #         order.amount_total = amount_untaxed + amount_tax
+
+    @api.depends_context('lang')
+    @api.depends('order_line.taxes_id', 'order_line.price_subtotal', 'amount_total', 'amount_untaxed',
+                 'order_line.delivery_charge')
+    def _compute_tax_totals(self):
         for order in self:
             order_lines = order.order_line.filtered(lambda x: not x.display_type)
-            if order.company_id.tax_calculation_rounding_method == 'round_globally':
-                tax_results = self.env['account.tax']._compute_taxes([
-                    line._convert_to_tax_base_line_dict()
-                    for line in order_lines
-                ])
-                totals = tax_results['totals']
-                amount_untaxed = totals.get(order.currency_id, {}).get('amount_untaxed', 0.0)
-                amount_tax = totals.get(order.currency_id, {}).get('amount_tax', 0.0)
-            else:
-                amount_untaxed = sum(order_lines.mapped('price_subtotal'))  # price_subtotal already includes delivery charge
-                amount_tax = sum(order_lines.mapped('price_tax'))
 
-            order.amount_untaxed = amount_untaxed
-            order.amount_tax = amount_tax
-            order.amount_total = amount_untaxed + amount_tax
+            # Compute tax totals
+            tax_totals = self.env['account.tax']._prepare_tax_totals(
+                [x._convert_to_tax_base_line_dict() for x in order_lines],
+                order.currency_id or order.company_id.currency_id,
+            )
+
+            # Add delivery charge to tax totals
+            total_delivery_charge = sum(order_lines.mapped('delivery_charge'))
+            tax_totals['amount_untaxed'] += total_delivery_charge
+            tax_totals['amount_total'] += total_delivery_charge
+
+            order.tax_totals = tax_totals
