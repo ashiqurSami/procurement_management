@@ -67,6 +67,7 @@
                         <field name="name" readonly="status in ('submitted', 'recommended', 'accepted')" invisible="1"/>
                         <field name="required_date" readonly="status in ('submitted', 'recommended', 'accepted')"/>
                         <field name="approved_supplier" readonly="status in ('submitted', 'recommended', 'accepted')"/>
+                        <field name="total_amount" />
                     </group>
 
                     <!--                    product_lines-->
@@ -104,11 +105,13 @@
                                                 string="Accept"
                                                 class="btn btn-success"
                                                 groups="procurement_management.group_procurement_management_approver"
+                                                invisible="state in ('purchase','cancel')"
                                         />
                                     </header>
                                     <group>
                                         <field name="expected_delivery_date" readonly="1"/>
                                         <field name="company_id" invisible="1"/>
+                                        <field name="state" readonly="1"/>
                                     </group>
                                     <group>
                                         <field name="partner_id" readonly="1"/>

@@ -3,12 +3,13 @@
     <menuitem id="procurement_management_menu_root"
               name="Procurement Management"
               web_icon="procurement_management,static/description/icon.png"
-              sequence="30">
+              sequence="40">
 
         <menuitem id="menu_supplier_registration"
                   name="Suppliers "
                   action="action_procurement_management_supplier_registration"
                   sequence="10"/>
+
         <menuitem id="menu_vendor_registration"
                   name="Waiting for Review"
                   action="action_procurement_management_supplier_registration_reviewer"
@@ -25,6 +26,11 @@
                   name="Request for Purchase"
                   action="action_procurement_management_rfp"
                   sequence="25"
+        />
+        <menuitem id="menu_rfp_report"
+                  name="RFP Report"
+                  action="action_report_rfp_excel"
+                  sequence="30"
         />
     </menuitem>
 </odoo>
