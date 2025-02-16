@@ -31,7 +31,7 @@ def notify_reviewer_upon_quotation_submission(self, rfq):
     template = self.env.ref('procurement_management.email_template_to_notify_reviewer_upon_quotation_submission').sudo()
     for reviewer in reviewer_group_users:
         if reviewer.email:
-            template.with_context(**context).send_mail(reviewer.id, force_send=True)
+            template.with_context(**context).send_mail(reviewer.id)
 
 def notify_approver_upon_recommended_rfq(self):
     approvers=get_approver_group_users(self)
@@ -44,7 +44,7 @@ def notify_approver_upon_recommended_rfq(self):
     template=self.env.ref('procurement_management.email_template_to_notify_approver_upon_recommended_rfq').sudo()
     for approver in approvers:
         if approver.email:
-            template.with_context(**context).send_mail(approver.id, force_send=True)
+            template.with_context(**context).send_mail(approver.id)
 
 def notify_reviewer_upon_rfp_approval(self):
     reviewer = get_reviewer(self)
@@ -56,7 +56,7 @@ def notify_reviewer_upon_rfp_approval(self):
         'created_by':self.create_uid.name
     }
     template=self.env.ref('procurement_management.email_template_to_notify_reviewer_upon_rfp_approval').sudo()
-    template.with_context(**context).send_mail(reviewer.id, force_send=True)
+    template.with_context(**context).send_mail(reviewer.id)
 
 
 def notify_supplier_upon_rfp_approval_and_publish(self):
@@ -72,7 +72,7 @@ def notify_supplier_upon_rfp_approval_and_publish(self):
     template=self.env.ref('procurement_management.email_template_to_notify_supplier_upon_rfp_publish_and_approval').sudo()
     for vendor in vendors:
         if vendor.email:
-            template.with_context(**context).send_mail(vendor.id, force_send=True)
+            template.with_context(**context).send_mail(vendor.id)
 
 def notify_reviewer_upon_rfp_rejection(self):
     reviewer=get_reviewer(self)
@@ -81,5 +81,5 @@ def notify_reviewer_upon_rfp_rejection(self):
         'email_from': self.env.user.company_id.email,
     }
     template=self.env.ref('procurement_management.email_template_to_notify_reviewer_upon_rfp_rejection').sudo()
-    template.with_context(**context).send_mail(reviewer.id, force_send=True)
+    template.with_context(**context).send_mail(reviewer.id)
 

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <!-- Form View for the Wizard -->
+    <record id="rfp_report_form_wizard_view" model="ir.ui.view">
+        <field name="name">rfp.report.view.form</field>
+        <field name="model">report.rfp.wizard</field>
+        <field name="arch" type="xml">
+            <form string="RFP Report">
+                <group>
+                    <field name="supplier_id"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                </group>
+                <div>
+                    <button name="action_generate_html_preview" string="Preview HTML" type="object" class="oe_highlight"/>
+                    <button name="action_generate_excel_report" string="Generate Excel Report" type="object" class="oe_highlight"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Excel Report Action -->
+    <record id="action_report_rfp_excel" model="ir.actions.act_window">
+        <field name="name">RFP Excel Report</field>
+        <field name="res_model">report.rfp.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        
+    </record>
+</odoo>
