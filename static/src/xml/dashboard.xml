@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="procurement_management.SupplierDashboard">
+        <div>
+            <label>Select Supplier:</label>
+            <select t-model="state.selectedSupplier" t-on-change="fetchMetrics">
+                <t t-foreach="state.suppliers" t-as="supplier" t-key="supplier.id">
+                    <option t-att-value="supplier.id" t-esc="supplier.name"/>
+                </t>
+            </select>
+
+            <label>Date Range:</label>
+            <select t-model="state.dateRange" t-on-change="fetchMetrics">
+                <option value="this_week">This Week</option>
+                <option value="last_week">Last Week</option>
+                <option value="last_month">Last Month</option>
+                <option value="last_year">Last Year</option>
+                <option value="custom">Custom Range</option>
+            </select>
+
+            <div>
+                <h3>Metrics</h3>
+                <p>Approved RFQs: <t t-esc="state.metrics.totalRFQs"/></p>
+                <p>Total Amount: <t t-esc="state.metrics.totalAmount"/></p>
+            </div>
+
+            <h3>Product-Wise Breakdown</h3>
+            <table>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                </tr>
+                <t t-foreach="state.metrics.productBreakdown" t-as="product" t-key="product.id">
+                    <tr>
+                        <td t-esc="product.name"/>
+                        <td t-esc="product.quantity"/>
+                    </tr>
+                </t>
+            </table>
+        </div>
+    </t>
+</templates>

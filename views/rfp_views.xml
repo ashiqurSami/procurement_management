@@ -165,39 +165,41 @@
         </field>
     </record>
 
-    <record id="view_procurement_management_rfp_graph" model="ir.ui.view">
-        <field name="name">procurement.management.rfp.graph</field>
-        <field name="model">procurement_management.rfp</field>
-        <field name="arch" type="xml">
-            <graph string="RFP Analysis" type="line">
-                <field name="required_date" interval="month"/>
-                <field name="total_amount" type="measure"/>
-                <field name="rfp_id_seq" type="col" string="RFP Reference"/>
-                <field name="approved_supplier" type="col" string="Supplier"/>
-                <field name="status" type="col" string="Status"/>
-                <field name="id" invisible="1"/> <!-- Prevent click redirection -->
+
+<record id="view_rfp_graph" model="ir.ui.view">
+		<field name="name">procurement_management.rfp.graph</field>
+		<field name="model">procurement_management.rfp</field>
+		<field name="arch" type="xml">
+            <graph string="RFP View Graph" type="line" disable_linking="True" stacked="0">
+                <field name="required_date" type="row" interval="month"/>
+                <field name="total_amount" type="col"/>
+                <field name="rfp_id_seq" string="RFP Number" type="group"/>
+                <field name="approved_supplier" string="Supplier" type="group"/>
+                <field name="status" string="Status" type="group"/>
             </graph>
-        </field>
-    </record>
+		</field>
+	</record>
 
-    <record id="view_procurement_management_rfp_pivot" model="ir.ui.view">
-        <field name="name">procurement.management.rfp.pivot</field>
-        <field name="model">procurement_management.rfp</field>
-        <field name="arch" type="xml">
-            <pivot string="RFP Pivot Analysis">
-                <field name="approved_supplier" type="row"/>
-                <field name="status" type="row"/>
+
+<record id="view_rfp_pivot" model="ir.ui.view">
+		<field name="name">procurement_management.rfp.pivot</field>
+		<field name="model">procurement_management.rfp</field>
+		<field name="arch" type="xml">
+		    <pivot string="RFP View Pivot" disable_linking="0" display_quantity="1">
+                <field name="approved_supplier" string="Supplier" type="row"/>
                 <field name="required_date" type="col" interval="month"/>
-                <field name="total_amount" />
-            </pivot>
-        </field>
-    </record>
+                <field name="status" type="subgroup"/>
+                <field name="total_amount" type="measure"/>
+		    </pivot>
+		</field>
+	</record>
 
 
-
-    <record id="action_procurement_management_rfp" model="ir.actions.act_window">
+<record id="action_procurement_management_rfp" model="ir.actions.act_window">
         <field name="name">RFP</field>
         <field name="res_model">procurement_management.rfp</field>
         <field name="view_mode">tree,form,graph,pivot</field>
     </record>
 </odoo>
+
+  

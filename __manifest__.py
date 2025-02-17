@@ -30,6 +30,7 @@ Long description of module's purpose
         'views/bank_views_extended.xml',
         'views/rfp_views.xml',
         'views/ir_sequence.xml',
+        'views/dashboard_views.xml',
         'wizard/supplier_reject_blacklist_wizard.xml',
         'views/email_templates.xml',
         'views/purchase_order_inherit_views.xml',
@@ -42,10 +43,10 @@ Long description of module's purpose
         'demo/demo.xml',
     ],
 
-    # Corrected assets path
-    # 'assets': {
-    #     'web.assets_backend': [
-    #         'procurement_management/static/src/css/custom_styles.css',  # ✅ Corrected path
-    #     ],
-    # },
+    'assets': {
+        'web.assets_backend': [
+            'procurement_management/static/src/js/dashboard.js',  # OWL Component
+            'procurement_management/static/src/xml/dashboard.xml',  # QWeb template
+        ],
+    },
 }
