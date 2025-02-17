@@ -10,6 +10,7 @@
                     <field name="supplier_id"/>
                     <field name="start_date"/>
                     <field name="end_date"/>
+                    <field name="html_preview" widget="html" string="Preview"/>
                 </group>
                 <div>
                     <button name="action_generate_html_preview" string="Preview HTML" type="object" class="oe_highlight"/>

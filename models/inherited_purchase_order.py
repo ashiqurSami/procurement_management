@@ -16,7 +16,12 @@ class PurchaseOrder(models.Model):
 
 
     def action_accept(self):
-        self.rfp_id.write({'status': 'accepted','approved_supplier':self.partner_id.id,'total_amount':self.amount_total})
+        self.rfp_id.write({
+            'status': 'accepted',
+            'approved_supplier':self.partner_id.id,
+            'total_amount':self.amount_total,
+        })
+
         self.write({'state': 'purchase','date_approve':fields.Datetime.now()})
         # print("\n \n","self.rfp_id.rfq_line_ids",self.rfp_id.rfq_line_ids,"\n \n")
         cancelled_rfqs=self.env['purchase.order'].search([('rfp_id','=',self.rfp_id.id),('state','!=','purchase')])

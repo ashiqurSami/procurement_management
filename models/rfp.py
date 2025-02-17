@@ -1,5 +1,6 @@
 from odoo import models, fields, api,_
 from odoo.exceptions import ValidationError
+from odoo.tools.populate import compute
 from ..utils.mail_utils import notify_approver_upon_recommended_rfq, notify_reviewer_upon_rfp_approval, \
     notify_supplier_upon_rfp_approval_and_publish, notify_reviewer_upon_rfp_rejection
 
@@ -40,6 +41,7 @@ class RFP(models.Model):
     approved_supplier = fields.Many2one(
         'res.partner',
         string='Approved Supplier',
+        readonly=True
     )
 
     product_line_ids = fields.One2many(
@@ -53,7 +55,7 @@ class RFP(models.Model):
         string='RFQ Lines',
         domain=lambda self: self._get_rfq_domain()
     )
-    total_amount=fields.Monetary(string='Total Amount',compute='_compute_total_amount')
+    total_amount=fields.Monetary(string='Total Amount')
 
     @api.model
     def _get_rfq_domain(self):
@@ -91,7 +93,7 @@ class RFP(models.Model):
         for approver in approver_group_users:
             print(approver.email)
             if approver.email:
-                template.with_context(**context).send_mail(approver.id, force_send=True)
+                template.with_context(**context).send_mail(approver.id)
 
     def action_recommend(self):
         if not any(line.recommended for line in self.rfq_line_ids):
@@ -115,17 +117,19 @@ class RFP(models.Model):
 
     def action_close(self):
         self.status='closed'
-    
 
-    @api.depends('rfq_line_ids', 'rfq_line_ids.state')
-    def _compute_total_amount(self):
-        for rfp in self:  # Iterate over each RFP in the recordset
-            accepted_rfqs = rfp.rfq_line_ids.filtered(lambda l: l.state == 'purchase')
-            total_amount = 0.0
-            for rfq in accepted_rfqs:
-                # Assuming tax_totals is a dictionary and contains 'amount_total'
-                if rfq.tax_totals and 'amount_total' in rfq.tax_totals:
-                    total_amount += rfq.tax_totals['amount_total']
-            rfp.total_amount = total_amount
+
+    #
+    # @api.depends('rfq_line_ids', 'rfq_line_ids.state')
+    # def _compute_total_amount(self):
+    #     for rfp in self:  # Iterate over each RFP in the recordset
+    #         accepted_rfqs = rfp.rfq_line_ids.filtered(lambda l: l.state == 'purchase')
+    #         total_amount = 0.0
+    #         for rfq in accepted_rfqs:
+    #             # Assuming tax_totals is a dictionary and contains 'amount_total'
+    #             if rfq.tax_totals and 'amount_total' in rfq.tax_totals:
+    #                 total_amount += rfq.tax_totals['amount_total']
+    #         rfp.total_amount = total_amount
+
 
 

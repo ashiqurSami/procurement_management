@@ -14,6 +14,7 @@ class RFPReportWizard(models.TransientModel):
     end_date = fields.Date(string="End Date", required=True)
     logo = fields.Binary(string="Company Logo")
     excel_report = fields.Binary(string="Excel Report")  # Added field to store the report
+    html_preview = fields.Html(string="HTML Preview", readonly=True)
 
     def _validate_inputs(self):
         """ Validates form inputs before generating the report """
@@ -48,6 +49,7 @@ class RFPReportWizard(models.TransientModel):
             ('required_date', '>=', self.start_date),
             ('required_date', '<=', self.end_date)
         ])
+        print("accepted rfps",accepted_rfps)
         if not accepted_rfps:
             raise UserError(_('The selected supplier has no accepted RFPs.'))
 
@@ -162,6 +164,7 @@ class RFPReportWizard(models.TransientModel):
                 ('rfp_id', '=', rfp.id),
                 ('state', '=', 'purchase')  # Assuming 'purchase' means the RFQ is accepted
             ], limit=1)  # Assuming 'purchase' means accepted
+            print("accepted rfq",accepted_rfq)
 
             if accepted_rfq:
                 for line in accepted_rfq.order_line:
@@ -219,4 +222,116 @@ class RFPReportWizard(models.TransientModel):
         }
 
     def action_generate_html_preview(self):
-        pass
+        approved_rfps = self._validate_inputs()
+
+        company = self.env.company
+        logo = company.logo and f"data:image/png;base64,{company.logo.decode()}" or ''
+
+        # Start HTML report content with company logo
+        html_content = f"""
+        <div style="font-family: Arial, sans-serif; padding: 10px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <img src="{logo}" alt="Company Logo" style="height: 80px;"/>
+                <h2 style="color: #4F81BD;">RFP Report for {self.supplier_id.name}</h2>
+                <p><strong>Date Range:</strong> {self.start_date.strftime('%d-%m-%Y')} to {self.end_date.strftime('%d-%m-%Y')}</p>
+                <p><strong>Company:</strong> {company.name} | <strong>Email:</strong> {company.email or 'N/A'} | <strong>Phone:</strong> {company.phone or 'N/A'}</p>
+            </div>
+
+            <h3 style="background-color: #4F81BD; color: white; padding: 5px;">Approved RFPs</h3>
+            <table border="1" cellpadding="5" cellspacing="0" width="100%" style="border-collapse: collapse;">
+                <tr style="background-color: #D9E1F2; text-align: center;">
+                    <th>RFP Number</th>
+                    <th>Date</th>
+                    <th>Required Date</th>
+                    <th>Total Amount</th>
+                </tr>
+        """
+
+        net_total = 0.0
+        for rfp in approved_rfps:
+            rfp_date = rfp.create_date.strftime('%d-%m-%Y') if rfp.create_date else ''
+            req_date = rfp.required_date.strftime('%d-%m-%Y') if rfp.required_date else ''
+            total_amount = "{:,.2f}".format(rfp.total_amount)
+            net_total += rfp.total_amount
+
+            html_content += f"""
+                <tr style="text-align: center;">
+                    <td>{rfp.rfp_id_seq}</td>
+                    <td>{rfp_date}</td>
+                    <td>{req_date}</td>
+                    <td>{total_amount}</td>
+                </tr>
+            """
+
+        html_content += f"""
+            <tr style="background-color: #D9E1F2; font-weight: bold; text-align: right;">
+                <td colspan="3">Net Total</td>
+                <td>{net_total:,.2f}</td>
+            </tr>
+            </table>
+            <br/>
+        """
+
+        # Product Summary Section
+        html_content += """
+            <h3 style="background-color: #4F81BD; color: white; padding: 5px;">Grouped Product Summary</h3>
+            <table border="1" cellpadding="5" cellspacing="0" width="100%" style="border-collapse: collapse;">
+                <tr style="background-color: #D9E1F2; text-align: center;">
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Delivery Charge</th>
+                    <th>Subtotal</th>
+                </tr>
+        """
+
+        product_groups = {}
+        for rfp in approved_rfps:
+            accepted_rfq = self.env['purchase.order'].search([
+                ('rfp_id', '=', rfp.id),
+                ('state', '=', 'purchase')
+            ], limit=1)
+
+            if accepted_rfq:
+                for line in accepted_rfq.order_line:
+                    product = line.product_id.name
+                    if product not in product_groups:
+                        product_groups[product] = {
+                            'product_qty': 0,
+                            'unit_price': 0,
+                            'delivery_charge': 0,
+                            'subtotal_price': 0,
+                        }
+                    product_groups[product]['product_qty'] += line.product_qty
+                    product_groups[product]['unit_price'] += line.price_unit
+                    product_groups[product]['delivery_charge'] += line.delivery_charge or 0
+                    product_groups[product]['subtotal_price'] += line.price_total
+
+        total_product_total = 0.0
+        for product, values in product_groups.items():
+            total_product_total += values['subtotal_price']
+            html_content += f"""
+                <tr style="text-align: center;">
+                    <td>{product}</td>
+                    <td>{values['product_qty']}</td>
+                    <td>{values['unit_price']:,.2f}</td>
+                    <td>{values['delivery_charge']:,.2f}</td>
+                    <td>{values['subtotal_price']:,.2f}</td>
+                </tr>
+            """
+
+        html_content += f"""
+            <tr style="background-color: #D9E1F2; font-weight: bold; text-align: right;">
+                <td colspan="4">Total</td>
+                <td>{total_product_total:,.2f}</td>
+            </tr>
+            </table>
+        </div>
+        """
+
+        self.html_preview = html_content
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'reload',
+        }
+

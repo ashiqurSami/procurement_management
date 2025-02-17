@@ -59,7 +59,7 @@
                 </header>
                 <sheet>
                     <widget name="web_ribbon" title="Accepted" bg_color="text-bg-success" invisible="status != 'accepted'"/>
-                        <widget name="web_ribbon" title="Rejected" bg_color="text-bg-danger" invisible="status != 'rejected'"/>
+                    <widget name="web_ribbon" title="Rejected" bg_color="text-bg-danger" invisible="status != 'rejected'"/>
                     <!--                    <div class="oe_title">-->
                     <!--                        <field name="rfp_id_seq" string="RFP ID"/>-->
                     <!--                    </div>-->
@@ -165,37 +165,33 @@
         </field>
     </record>
 
+    <record id="view_procurement_management_rfp_graph" model="ir.ui.view">
+        <field name="name">procurement.management.rfp.graph</field>
+        <field name="model">procurement_management.rfp</field>
+        <field name="arch" type="xml">
+            <graph string="RFP Analysis" type="line">
+                <field name="required_date" interval="month"/>
+                <field name="total_amount" type="measure"/>
+                <field name="rfp_id_seq" type="col" string="RFP Reference"/>
+                <field name="approved_supplier" type="col" string="Supplier"/>
+                <field name="status" type="col" string="Status"/>
+                <field name="id" invisible="1"/> <!-- Prevent click redirection -->
+            </graph>
+        </field>
+    </record>
 
-<record id="view_rfp_graph" model="ir.ui.view">
-    <field name="name">rfp.graph.view</field>
-    <field name="model">procurement_management.rfp</field>
-    <field name="arch" type="xml">
-        <graph string="RFP Analysis" type="line">
-            <field name="required_date" type="row" interval="month"/>
-            <field name="total_amount" type="measure"/>
-            <field name="rfp_id_seq" type="col" string="RFP Reference"/>
-            <field name="approved_supplier" type="col" string="Supplier"/>
-            <field name="status" type="col" string="Status"/>
-            <field name="total_amount" type="measure"/>
-            <field name="id" invisible="context"/>
-        </graph>
-    </field>
-</record>
-
-
-<record id="view_rfp_pivot" model="ir.ui.view">
-    <field name="name">rfp.pivot.view</field>
-    <field name="model">procurement_management.rfp</field>
-    <field name="arch" type="xml">
-        <pivot string="RFP Pivot Analysis">
-            <field name="approved_supplier" type="row"/>
-            <field name="status" type="row"/>
-            <field name="required_date" type="col" interval="month"/>
-            <field name="total_amount" type="measure"/>
-            <field name="id" invisible="context"/>
-        </pivot>
-    </field>
-</record>
+    <record id="view_procurement_management_rfp_pivot" model="ir.ui.view">
+        <field name="name">procurement.management.rfp.pivot</field>
+        <field name="model">procurement_management.rfp</field>
+        <field name="arch" type="xml">
+            <pivot string="RFP Pivot Analysis">
+                <field name="approved_supplier" type="row"/>
+                <field name="status" type="row"/>
+                <field name="required_date" type="col" interval="month"/>
+                <field name="total_amount" />
+            </pivot>
+        </field>
+    </record>
 
 
 
