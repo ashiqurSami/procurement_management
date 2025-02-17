@@ -1,6 +1,7 @@
 from tokenize import String
 from odoo import models, fields, api, exceptions,_
 from odoo.exceptions import ValidationError
+from datetime import datetime, timedelta
 
 
 class PurchaseOrder(models.Model):
@@ -92,3 +93,47 @@ class PurchaseOrder(models.Model):
             tax_totals['amount_total'] += total_delivery_charge
 
             order.tax_totals = tax_totals
+
+    @api.model
+    def get_supplier_metrics(self, supplier_id, date_range):
+        date_from, date_to = self._get_date_range(date_range)
+
+        orders = self.search([
+            ("partner_id", "=", supplier_id),
+            ("state", "=", "purchase"),
+            ("date_order", ">=", date_from),
+            ("date_order", "<=", date_to),
+        ])
+
+        total_amount = sum(orders.mapped("amount_total"))
+        product_data = {}
+
+        for order in orders:
+            for line in order.order_line:
+                product = line.product_id.name
+                if product in product_data:
+                    product_data[product] += line.product_qty
+                else:
+                    product_data[product] = line.product_qty
+
+        return {
+            "totalRFQs": len(orders),
+            "totalAmount": total_amount,
+            "productBreakdown": [{"name": k, "quantity": v} for k, v in product_data.items()],
+        }
+
+    def _get_date_range(self, date_range):
+        today = fields.Date.today()
+        if date_range == "this_week":
+            start = today - timedelta(days=today.weekday())
+        elif date_range == "last_week":
+            start = today - timedelta(days=today.weekday() + 7)
+        elif date_range == "last_month":
+            start = today.replace(day=1) - timedelta(days=1)
+            start = start.replace(day=1)
+        elif date_range == "last_year":
+            start = today.replace(month=1, day=1) - timedelta(days=1)
+            start = start.replace(month=1, day=1)
+        else:
+            start = today  # Default fallback
+        return start, today

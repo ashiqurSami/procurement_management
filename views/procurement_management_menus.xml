@@ -32,5 +32,10 @@
                   action="action_report_rfp_excel"
                   sequence="30"
         />
+        <menuitem id="menu_supplier_dashboard"
+                  name="Supplier Dashboard"
+                  action="action_supplier_dashboard"
+                  sequence="35"
+        />
     </menuitem>
 </odoo>
