@@ -110,17 +110,21 @@ class PurchaseOrder(models.Model):
 
         for order in orders:
             for line in order.order_line:
-                product = line.product_id.name
-                if product in product_data:
-                    product_data[product] += line.product_qty
+                product = line.product_id
+                if product.name in product_data:
+                    product_data[product.name]["quantity"] += line.product_qty
                 else:
-                    product_data[product] = line.product_qty
+                    product_data[product.name] = {
+                        "quantity": line.product_qty,
+                        "image": product.image_1920.decode("utf-8") if product.image_1920 else "",
+                    }
 
         return {
             "totalRFQs": len(orders),
             "totalAmount": total_amount,
-            "productBreakdown": [{"name": k, "quantity": v} for k, v in product_data.items()],
+            "productBreakdown": [{"name": k, "quantity": v["quantity"], "image": v["image"]} for k, v in product_data.items()],
         }
+
 
     def _get_date_range(self, date_range):
         today = fields.Date.today()

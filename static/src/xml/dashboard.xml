@@ -41,6 +41,22 @@
                 </div>
             </div>
 
+            <!-- Product Breakdown Section -->
+            <div class="product-breakdown">
+                <h3>Product Breakdown</h3>
+                <div class="product-grid">
+                    <t t-foreach="state.metrics.productBreakdown" t-as="product" t-key="product.name">
+                        <div class="product-card">
+                            <img t-att-src="'data:image/png;base64,' + product.image" alt="Product Image"/>
+                            <div class="product-info">
+                                <h4 t-esc="product.name"/>
+                                <p>Quantity: <t t-esc="product.quantity"/></p>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+
             <!-- Charts Section -->
             <div class="charts-container">
                 <div class="chart-box">
@@ -51,15 +67,8 @@
                     <h4>Product Distribution</h4>
                     <canvas t-ref="chartPie"></canvas>
                 </div>
-                <div class="chart-box">
-                    <h4>Supplier Performance</h4>
-                    <canvas t-ref="chartLine"></canvas>
-                </div>
-                <div class="chart-box">
-                    <h4>Revenue Analysis</h4>
-                    <canvas t-ref="chartDoughnut"></canvas>
-                </div>
             </div>
+            
         </div>
     </t>
 </templates>
