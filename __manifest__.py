@@ -45,7 +45,8 @@ Long description of module's purpose
 
     'assets': {
         'web.assets_backend': [
-            'procurement_management/static/src/js/dashboard.js',  # OWL Component
+            'procurement_management/static/src/js/dashboard.js',
+            'procurement_management/static/src/css/dashboard.css',# OWL Component
             'procurement_management/static/src/xml/dashboard.xml',  # QWeb template
         ],
     },
