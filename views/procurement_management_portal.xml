@@ -30,7 +30,58 @@
                     <t t-set="config_card" t-value="True"/>
                 </t>
             </xpath>
+            <xpath expr="//div[@id='portal_client_category']" position="inside">
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="icon" t-value="'/sale/static/src/img/bag.svg'"/>
+                    <t t-set="title">My RFQs</t>
+                    <t t-set="text">RFQs</t>
+                    <t t-set="url" t-value="'/procurement_management/my/rfqs'"/>
+                    <t t-set="config_card" t-value="True"/>
+                </t>
+            </xpath>
+        </template>
 
+        <template id="portal_my_home_supplier_registration_breadcrumbs" name="Portal layout : School menu breadcrumbs"
+                  inherit_id="portal.portal_breadcrumbs" priority="25">
+            <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+                <li t-if="page_name == 'sign_up'" class="breadcrumb-item">
+                    signup
+                </li>
+                <li t-if="page_name == 'otp'" class="breadcrumb-item">
+                    otp
+                </li>
+                <li t-if="page_name == 'verify'" class="breadcrumb-item">
+                    otp
+                </li>
+                <li t-if="page_name == 'supplier_registration'" class="breadcrumb-item">
+                    registration
+                </li>
+                <li t-if="page_name == 'rfp'" class="breadcrumb-item">
+                    rfps
+                </li>
+                <li t-if="page_name == 'rfp_id'" class="breadcrumb-item">
+                    <a t-att-href="'/procurement_management/rfps'">
+                        <t>rfps</t>
+                    </a>
+                </li>
+                <li t-if="page_name == 'rfp_id'" class="breadcrumb-item">
+                    <t t-esc="rfp.rfp_id_seq"/>
+                </li>
+                <li t-if="page_name == 'submit'" class="breadcrumb-item">
+                    notification
+                </li>
+                <li t-if="page_name == 'my_rfq'" class="breadcrumb-item">
+                    my-rfqs
+                </li>
+                <li t-if="page_name == 'rfq_details'" class="breadcrumb-item">
+                    <a t-att-href="'/procurement_management/my/rfqs'">
+                        <t>my-rfqs</t>
+                    </a>
+                </li>
+                <li t-if="page_name == 'rfq_details'" class="breadcrumb-item">
+                    <t t-esc="rfq.name"/>
+                </li>
+            </xpath>
         </template>
 
         <!--    sign up template-->
@@ -511,7 +562,7 @@
                                             <th style="width: 20%;">RFP ID Seq</th>
                                             <th style="width: 30%;">Status</th>
                                             <th style="width: 15%;">Required Date</th>
-                                            
+
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -544,96 +595,96 @@
 
 
         <template id="rfp_form_view_template" name="Portal RFP Form">
-    <t t-call="portal.portal_layout">
-        <t t-set="title" t-value="'Request for Proposal'"/>
-        <div class="d-flex justify-content-between">
-            <!-- Name on the top-left -->
-            <div>
-                <strong><span style="font-size: 1.5rem; font-weight: bold;">ID:</span></strong> <span style="font-size: 1.5rem; font-weight: bold;"><t t-esc="rfp.rfp_id_seq"/></span>
-            </div>
-            <div>
-                <strong>Status:</strong> <span class="badge bg-info"><t t-esc="rfp.status"/></span>
-            </div>
-        </div>
-        <br/>
-
-        <div class="container">
-            <form t-attf-action="/procurement_management/rfp/{{rfp.id}}/submit" method="POST">
-                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                <input type="hidden" name="rfp_id" t-att-value="rfp.id"/>
-                <div class="col-md-6">
-
+            <t t-call="portal.portal_layout">
+                <t t-set="title" t-value="'Request for Proposal'"/>
+                <div class="d-flex justify-content-between">
+                    <!-- Name on the top-left -->
+                    <div>
+                        <strong><span style="font-size: 1.5rem; font-weight: bold;">ID:</span></strong> <span style="font-size: 1.5rem; font-weight: bold;"><t t-esc="rfp.rfp_id_seq"/></span>
+                    </div>
+                    <div>
+                        <strong>Status:</strong> <span class="badge bg-info"><t t-esc="rfp.status"/></span>
+                    </div>
                 </div>
-                <label>Warranty Period (months)</label>
-                <input type="number" name="warranty_period" class="form-control" required="required"/>
-
-                <!-- Expected Delivery Date -->
-                <label>Expected Delivery Date</label>
-                <input type="date" name="expected_delivery_date" class="form-control" required="required"/>
-
-                <!-- Terms and Conditions -->
-                <label>Terms Conditions</label>
-                <textarea name="notes" class="form-control"/>
-
-                <h3>Product Lines</h3>
-                <table class="table table-bordered mt-3">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Product</th>
-                            <th>Image</th>
-                            <th>Description</th>
-                            <th>Quantity</th>
-                            <th>Unit Price</th>
-                            <th>Delivery Charges</th>
-                            <th>Subtotal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <t t-foreach="rfp.product_line_ids" t-as="line">
-                            <tr>
-                                <td><t t-esc="line.product_id.name"/></td>
-                                <td>
-                                    <t t-if="line.product_id.image_1920">
-                                        <img t-att-src="image_data_uri(line.product_id.image_1920)"
-                                             class="img-thumbnail"
-                                             style="max-width:80px;"/>
-                                    </t>
-                                    <t t-else="">
-                                        <img src="/web/static/src/img/placeholder.png"
-                                             class="img-thumbnail"
-                                             style="max-width:80px;"/>
-                                    </t>
-                                </td>
-                                <td><t t-esc="line.description"/></td>
-                                <td>
-                                    <t t-esc='line.quantity'/>
-                                </td>
-                                <td>
-                                    <input type="number" name="unit_price" t-attf-name='order_line_unit_price_#{line.id}' t-att-value="line.unit_price" class="form-control" />
-                                </td>
-                                <td>
-                                    <input type="number" name="delivery_charge" t-attf-name='order_line_delivery_charge_#{line.id}' t-att-value="line.delivery_charges" class="form-control" />
-                                </td>
-                                <td><t t-esc="line.subtotal"/></td>
-                            </tr>
-                        </t>
-                    </tbody>
-                    <!-- New row for total sum -->
-                    <tfoot>
-                        <tr>
-                            <td colspan="6" style="text-align: right;"><strong>Total:</strong></td>
-                            <td id="total-sum">0.00</td>
-                        </tr>
-                    </tfoot>
-                </table>
                 <br/>
-                <button type="submit" class="btn btn-success">Submit RFQ</button>
-                <br/>
-            </form>
-        </div>
-    </t>
-    <script src="/procurement_management/static/src/js/rfq_form.js">RFQ Form</script>
-</template>
+
+                <div class="container">
+                    <form t-attf-action="/procurement_management/rfp/{{rfp.id}}/submit" method="POST">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="hidden" name="rfp_id" t-att-value="rfp.id"/>
+                        <div class="col-md-6">
+
+                        </div>
+                        <label>Warranty Period (months)</label>
+                        <input type="number" name="warranty_period" class="form-control" required="required"/>
+
+                        <!-- Expected Delivery Date -->
+                        <label>Expected Delivery Date</label>
+                        <input type="date" name="expected_delivery_date" class="form-control" required="required"/>
+
+                        <!-- Terms and Conditions -->
+                        <label>Terms Conditions</label>
+                        <textarea name="notes" class="form-control"/>
+
+                        <h3>Product Lines</h3>
+                        <table class="table table-bordered mt-3">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Image</th>
+                                    <th>Description</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>Delivery Charges</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="rfp.product_line_ids" t-as="line">
+                                    <tr>
+                                        <td><t t-esc="line.product_id.name"/></td>
+                                        <td>
+                                            <t t-if="line.product_id.image_1920">
+                                                <img t-att-src="image_data_uri(line.product_id.image_1920)"
+                                                     class="img-thumbnail"
+                                                     style="max-width:80px;"/>
+                                            </t>
+                                            <t t-else="">
+                                                <img src="/web/static/src/img/placeholder.png"
+                                                     class="img-thumbnail"
+                                                     style="max-width:80px;"/>
+                                            </t>
+                                        </td>
+                                        <td><t t-esc="line.description"/></td>
+                                        <td>
+                                            <t t-esc='line.quantity'/>
+                                        </td>
+                                        <td>
+                                            <input type="number" name="unit_price" t-attf-name='order_line_unit_price_#{line.id}' t-att-value="line.unit_price" class="form-control" />
+                                        </td>
+                                        <td>
+                                            <input type="number" name="delivery_charge" t-attf-name='order_line_delivery_charge_#{line.id}' t-att-value="line.delivery_charges" class="form-control" />
+                                        </td>
+                                        <td><t t-esc="line.subtotal"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                            <!-- New row for total sum -->
+                            <tfoot>
+                                <tr>
+                                    <td colspan="6" style="text-align: right;"><strong>Total:</strong></td>
+                                    <td id="total-sum">0.00</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <br/>
+                        <button type="submit" class="btn btn-success">Submit RFQ</button>
+                        <br/>
+                    </form>
+                </div>
+            </t>
+            <script src="/procurement_management/static/src/js/rfq_form.js">RFQ Form</script>
+        </template>
 
         <template id="rfq_submit_view_template" name="RFQ submission form">
             <t t-call="portal.portal_layout">
@@ -650,6 +701,126 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </t>
+        </template>
+
+        <template id="rfq_list_view_template">
+            <t t-call="portal.portal_layout">
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">RFQ List</t>
+                </t>
+                <div class="container mt-5">
+                    <div class="row justify-content-center">
+                        <div class="col-md-10">
+                            <h1 class="text-center mb-4">My RFQs</h1>
+
+                            <t t-call="portal.portal_table">
+                                <thead style="background-color: #4A90E2; color: #fff;">
+                                    <tr>
+                                        <th style="width: 20%;">RFQ Name</th>
+                                        <th style="width: 20%;">Linked RFP</th>
+                                        <th style="width: 15%;">State</th>
+                                        <th style="width: 20%;">Expected Delivery Date</th>
+                                        <th style="width: 15%;">Warranty (Months)</th>
+                                    </tr>
+                                </thead>
+                                <t t-foreach="group_rfqs" t-as="group">
+                                    <tbody>
+                                        <t t-foreach="group['rfqs']" t-as="rfq">
+                                            <tr>
+                                                <td>
+                                                    <a t-attf-href="/procurement_management/rfq/#{rfq.id}">
+                                                        <t t-esc="rfq.name"/>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="rfq.rfp_id.rfp_id_seq"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="rfq.state"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="rfq.expected_delivery_date"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="rfq.warranty_period"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </t>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <template id="rfq_form_view_template" name="Portal RFQ Form">
+            <t t-call="portal.portal_layout">
+                <t t-set="title" t-value="'Request for Quotation'"/>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <strong><span style="font-size: 1.5rem; font-weight: bold;">ID:</span></strong>
+                        <span style="font-size: 1.5rem; font-weight: bold;"><t t-esc="rfq.name"/></span>
+                    </div>
+                    <div>
+                        <strong>Status:</strong> <span class="badge bg-info"><t t-esc="rfq.state"/></span>
+                    </div>
+                </div>
+                <br/>
+                <div class="container">
+                    <h3>Details</h3>
+                    <p><strong>Warranty Period (months):</strong> <t t-esc="rfq.warranty_period"/></p>
+                    <p><strong>Expected Delivery Date:</strong> <t t-esc="rfq.expected_delivery_date"/></p>
+                    <p><strong>Terms and Conditions:</strong></p>
+                    <p><t t-esc="rfq.terms_conditions"/></p>
+                    <h3>Product Lines</h3>
+                    <table class="table table-bordered mt-3">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Product</th>
+                                <th>Image</th>
+                                <th>Description</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Delivery Charges</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="rfq.order_line" t-as="line">
+                                <tr>
+                                    <td><t t-esc="line.product_id.name"/></td>
+                                    <td>
+                                        <t t-if="line.product_id.image_1920">
+                                            <img t-att-src="image_data_uri(line.product_id.image_1920)"
+                                                 class="img-thumbnail"
+                                                 style="max-width:80px;"/>
+                                        </t>
+                                        <t t-else="">
+                                            <img src="/web/static/src/img/placeholder.png"
+                                                 class="img-thumbnail"
+                                                 style="max-width:80px;"/>
+                                        </t>
+                                    </td>
+                                    <td><t t-esc="line.name"/></td>
+                                    <td><t t-esc='line.product_qty'/></td>
+                                    <td><t t-esc="line.price_unit"/></td>
+                                    <td><t t-esc="line.delivery_charge"/></td>
+                                    <td><t t-esc="line.price_subtotal"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="6" style="text-align: right;"><strong>Total:</strong></td>
+                                <td id="total-sum"><t t-esc="rfq.amount_total"/></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <br/>
                 </div>
             </t>
         </template>
