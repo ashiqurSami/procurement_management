@@ -4,6 +4,7 @@ from odoo import http, _
 from odoo.tools import groupby as groupbyelem
 from operator import itemgetter
 from ..utils.mail_utils import notify_reviewer_upon_quotation_submission
+from odoo.osv import expression
 
 
 class MyRFQPortal(CustomerPortal):
@@ -73,7 +74,7 @@ class MyRFQPortal(CustomerPortal):
 
         return request.render('procurement_management.rfp_list_view_template', {
             'group_rfps': rfp_group_list,
-            'page_name': 'my_rfp',
+            'page_name': 'rfp',
             'pager': pager,
             'sortby': sortby,
             'searchbar_sortings': searchbar_sortings,
@@ -88,7 +89,7 @@ class MyRFQPortal(CustomerPortal):
     @http.route('/procurement_management/rfp/<int:rfp_id>', auth='user', methods=['POST', 'GET'], website=True)
     def rfp_details(self,rfp_id,**kw):
         rfp=request.env['procurement_management.rfp'].sudo().browse(rfp_id)
-        return request.render('procurement_management.rfp_form_view_template',{'rfp':rfp})
+        return request.render('procurement_management.rfp_form_view_template',{'rfp':rfp,'page_name':'rfp_id'})
 
     @http.route(['/procurement_management/rfp/<int:rfp_id>/create_rfp'], type='http',auth='user', website=True)
     def create_rfq(self,rfp_id,**kw):
@@ -127,8 +128,92 @@ class MyRFQPortal(CustomerPortal):
             request.env['purchase.order.line'].sudo().create(rfq_line)
             notify_reviewer_upon_quotation_submission(request,rfq)
 
-        return request.render('procurement_management.rfq_submit_view_template',{'rfp':rfp,'success_list':success_list})
+        return request.render('procurement_management.rfq_submit_view_template',{'rfp':rfp,'success_list':success_list,'page_name':'submit'})
 
+    @http.route(['/procurement_management/my/rfqs', '/procurement_management/my/rfqs/page/<int:page>'], type='http', auth='user', website=True)
+    def rfqs_list(self, page=1, sortby=None, search=None, search_in='all', groupby='none', **kw):
+        # Sorting options
+        searchbar_sortings = {
+            'date': {'label': _('Newest'), 'order': 'create_date desc'},
+            'name': {'label': _('RFQ Name'), 'order': 'name'},
+            'state': {'label': _('State'), 'order': 'state'},
+            'expected_delivery_date': {'label': _('Expected Delivery Date'), 'order': 'expected_delivery_date'},
+        }
 
+        # Searching options
+        search_list = {
+            'all': {'label': _('All'), 'input': 'all', 'domain': []},
+            'name': {'label': _('RFQ Name'), 'input': 'name', 'domain': [('name', 'ilike', search)]},
+            'rfp_id': {'label': _('Linked RFP'), 'input': 'rfp_id', 'domain': [('rfp_id.rfp_id_seq', 'ilike', search)]},
+        }
 
- 
+        # Apply search filters
+        search_domain = search_list[search_in]['domain'] if search and search_in in search_list else []
+
+        # Add condition to only include RFQs for the current user
+        user = request.env.user
+        search_domain.append(('partner_id', '=', user.partner_id.id))
+
+        # Default sorting
+        if not sortby:
+            sortby = 'date'
+        order = searchbar_sortings[sortby]['order']
+
+        # Grouping options
+        if not groupby or groupby == 'none':
+            groupby = 'state'
+        groupby_list = {
+            'none': {'label': _('None'), 'input': ''},
+            'state': {'label': _('State'), 'input': 'state'},
+            'expected_delivery_date': {'label': _('Expected Delivery Date'), 'input': 'expected_delivery_date'},
+        }
+
+        # Ensure group_by_rfq is always a dictionary
+        group_by_rfq = groupby_list.get(groupby, {'input': None})
+
+        # Pagination setup
+        rfq_obj = request.env['purchase.order']
+        rfq_count = rfq_obj.search_count(search_domain)
+        items_per_page = 3  # Adjust as needed
+        pager = portal_pager(
+            url='/procurement_management/my/rfqs',
+            total=rfq_count,
+            page=page, step=items_per_page,
+            scope=5,
+            url_args={'sortby': sortby, 'search_in': search_in, 'search': search, 'groupby': groupby}
+        )
+
+        # Fetch paginated records
+        rfqs = rfq_obj.search(search_domain, limit=items_per_page, offset=pager['offset'], order=order)
+
+        # Grouping logic
+        if group_by_rfq['input']:  # Only group if valid input is provided
+            rfq_group_list = [{group_by_rfq['input']: key, 'rfqs': list(group)}
+                              for key, group in groupbyelem(rfqs, itemgetter(group_by_rfq['input']))]
+        else:
+            rfq_group_list = [{'rfqs': rfqs}]
+
+        return request.render('procurement_management.rfq_list_view_template', {
+            'group_rfqs': rfq_group_list,
+            'page_name': 'my_rfq',
+            'pager': pager,
+            'sortby': sortby,
+            'searchbar_sortings': searchbar_sortings,
+            'searchbar_inputs': search_list,
+            'search_in': search_in,
+            'search': search,
+            'default_url': '/procurement_management/my/rfqs',
+            'groupby': groupby,
+            'searchbar_groupby': groupby_list,
+        })
+
+    @http.route('/procurement_management/rfq/<int:rfq_id>', type='http', auth="user", website=True)
+    def rfq_details(self, rfq_id):
+        rfq = request.env['purchase.order'].sudo().browse(rfq_id)
+        if not rfq.exists():
+            return request.not_found()
+        values = {
+            'rfq': rfq,
+            'page_name':'rfq_details'
+        }
+        return request.render('procurement_management.rfq_form_view_template', values)

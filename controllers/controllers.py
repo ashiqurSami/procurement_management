@@ -29,7 +29,10 @@ class ProcurementManagement(http.Controller):
 
     @http.route('/procurement_management/sign-up', auth='public',website=True)
     def sign_up(self, **kw):
-        return request.render('procurement_management.sign_up_template',{})
+        page_name='sign_up'
+        return request.render('procurement_management.sign_up_template',{
+            'page_name':page_name
+        })
 
     @http.route('/procurement_management/otp', auth='public', methods=['POST'], website=True)
     def send_otp(self, **kw):
@@ -72,9 +75,11 @@ class ProcurementManagement(http.Controller):
         mail_id.sudo().send()
         success_list.append('OTP has been sent to your email.')
 
+        page_name='otp'
         # Pass the email to the OTP verification template
         return request.render('procurement_management.otp_verify_template', {
             'email': email,
+            'page_name': page_name,
             'success_list': success_list
         })
 
@@ -103,7 +108,8 @@ class ProcurementManagement(http.Controller):
             })
 
         error_list.append('Invalid OTP. Please try again.')
-        return request.render('procurement_management.otp_verify_template', {'error_list': error_list})
+        page_name='verify'
+        return request.render('procurement_management.otp_verify_template', {'error_list': error_list, 'page_name': page_name})
 
     @http.route('/procurement_management/register', auth='public', methods=['POST','GET'], website=True)
     def register_supplier(self, **kw):

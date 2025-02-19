@@ -159,7 +159,7 @@ html, body {
 }
 
 /* Fancy border outline for metric grid, product grid, and chart container */
-/* .metrics-grid, .product-grid, .charts-container {
+.metrics-grid, .product-grid, .charts-container {
     border: 2px solid transparent;
     border-radius: 12px;
     padding: 10px;
@@ -191,4 +191,4 @@ html, body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 2px solid rgba(106, 17, 203, 0.5);  
-} */
+}
