@@ -9,8 +9,12 @@
         <field name="arch" type="xml">
             <!-- Locate the 'price_unit' field inside the tree view -->
             <xpath expr="//form//sheet//notebook//page//field[@name='order_line']//tree//field[@name='price_unit']" position="after">
-                <field name="delivery_charge"/>
+                <field name="delivery_charge" optional="hide"/>
             </xpath>
+            <xpath expr="//form[@class='o_purchase_order']//sheet//group//group//field[@name='partner_ref']" position="before">
+                <field name="rfp_id" string="RFP ID"/>
+            </xpath>
+
         </field>
     </record>
 </odoo>

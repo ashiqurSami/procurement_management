@@ -760,68 +760,155 @@
         <template id="rfq_form_view_template" name="Portal RFQ Form">
             <t t-call="portal.portal_layout">
                 <t t-set="title" t-value="'Request for Quotation'"/>
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <strong><span style="font-size: 1.5rem; font-weight: bold;">ID:</span></strong>
-                        <span style="font-size: 1.5rem; font-weight: bold;"><t t-esc="rfq.name"/></span>
+
+                <!-- Main Container -->
+                <div class="container-fluid px-4 py-5" style="max-width: 1440px; margin: 0 auto;">
+
+                    <!-- Header Section -->
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start mb-5 p-4 bg-white rounded-4 shadow-sm">
+                        <div class="mb-3 mb-md-0">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="text-muted fs-5">RFQ Reference:</span>
+                                <h1 class="display-6 fw-bold text-primary mb-0">
+                                    <t t-esc="rfq.name"/>
+                                </h1>
+                            </div>
+                            <div class="mt-2">
+                                <span class="text-muted">Created:</span>
+                                <span class="text-dark"><t t-esc="rfq.create_date"/></span>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column align-items-end">
+                            <div class="d-flex align-items-center gap-2">
+                                <strong>Status:</strong> <span class="badge bg-info"><t t-esc="rfq.state"/></span>
+                            </div>
+                            <div class="mt-2 text-end">
+                                <small class="text-muted">Last Updated:</small>
+                                <div class="text-dark"><t t-esc="rfq.write_date"/></div>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <strong>Status:</strong> <span class="badge bg-info"><t t-esc="rfq.state"/></span>
+
+                    <!-- Details Card -->
+                    <div class="row g-4 mb-5">
+                        <div class="col-lg-4">
+                            <div class="card border-0 h-100 shadow-sm">
+                                <div class="card-header bg-primary text-white py-3">
+                                    <h5 class="card-title mb-0"><i class="fas fa-info-circle me-2"></i>Key Details</h5>
+                                </div>
+                                <div class="card-body">
+                                    <dl class="row mb-0">
+                                        <dt class="col-sm-6 text-muted">Warranty Period</dt>
+                                        <dd class="col-sm-6 fw-bold"><t t-esc="rfq.warranty_period"/> months</dd>
+
+                                        <dt class="col-sm-6 text-muted">Delivery Date</dt>
+                                        <dd class="col-sm-6 fw-bold"><t t-esc="rfq.expected_delivery_date"/></dd>
+
+                                        <dt class="col-sm-6 text-muted">Total Value</dt>
+                                        <dd class="col-sm-6 fw-bold text-success">$<t t-esc="rfq.amount_total"/></dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Terms & Conditions Card -->
+                        <div class="col-lg-8">
+                            <div class="card border-0 h-100 shadow-sm">
+                                <div class="card-header bg-primary text-white py-3">
+                                    <h5 class="card-title mb-0"><i class="fas fa-file-contract me-2"></i>Terms and Conditions</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="prose-scroll" style="max-height: 200px; overflow-y: auto;">
+                                        <t t-esc="rfq.terms_conditions"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <br/>
-                <div class="container">
-                    <h3>Details</h3>
-                    <p><strong>Warranty Period (months):</strong> <t t-esc="rfq.warranty_period"/></p>
-                    <p><strong>Expected Delivery Date:</strong> <t t-esc="rfq.expected_delivery_date"/></p>
-                    <p><strong>Terms and Conditions:</strong></p>
-                    <p><t t-esc="rfq.terms_conditions"/></p>
-                    <h3>Product Lines</h3>
-                    <table class="table table-bordered mt-3">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Product</th>
-                                <th>Image</th>
-                                <th>Description</th>
-                                <th>Quantity</th>
-                                <th>Unit Price</th>
-                                <th>Delivery Charges</th>
-                                <th>Subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <t t-foreach="rfq.order_line" t-as="line">
-                                <tr>
-                                    <td><t t-esc="line.product_id.name"/></td>
-                                    <td>
-                                        <t t-if="line.product_id.image_1920">
-                                            <img t-att-src="image_data_uri(line.product_id.image_1920)"
-                                                 class="img-thumbnail"
-                                                 style="max-width:80px;"/>
+
+                    <!-- Products Table -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-primary text-white py-3">
+                            <h5 class="card-title mb-0"><i class="fas fa-boxes me-2"></i>Requested Items</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th class="py-3 ps-4" style="width: 120px;">Image</th>
+                                            <th class="py-3">Product</th>
+                                            <th class="py-3 text-end" style="width: 100px;">Qty</th>
+                                            <th class="py-3 text-end" style="width: 120px;">Unit Price</th>
+                                            <th class="py-3 text-end" style="width: 140px;">Delivery Charges</th>
+                                            <th class="py-3 text-end pe-4" style="width: 140px;">Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="rfq.order_line" t-as="line">
+                                            <tr class="position-relative">
+                                                <td class="ps-4">
+                                                    <div class="position-relative" style="width: 80px; height: 80px;">
+                                                        <img t-if="line.product_id.image_1920"
+                                                             t-att-src="image_data_uri(line.product_id.image_1920)"
+                                                             class="img-fluid rounded-3 border object-fit-cover h-100 w-100"/>
+                                                        <img t-else=""
+                                                             src="/web/static/src/img/placeholder.png"
+                                                             class="img-fluid rounded-3 border object-fit-cover h-100 w-100"/>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="fw-bold"><t t-esc="line.product_id.name"/></div>
+                                                    <small class="text-muted line-clamp-2" style="--line-clamp: 2;">
+                                                        <t t-esc="line.name"/>
+                                                    </small>
+                                                </td>
+                                                <td class="text-end"><t t-esc="line.product_qty"/></td>
+                                                <td class="text-end">$<t t-esc="line.price_unit"/></td>
+                                                <td class="text-end">$<t t-esc="line.delivery_charge"/></td>
+                                                <td class="text-end pe-4 fw-bold">$<t t-esc="line.price_subtotal"/></td>
+                                            </tr>
                                         </t>
-                                        <t t-else="">
-                                            <img src="/web/static/src/img/placeholder.png"
-                                                 class="img-thumbnail"
-                                                 style="max-width:80px;"/>
-                                        </t>
-                                    </td>
-                                    <td><t t-esc="line.name"/></td>
-                                    <td><t t-esc='line.product_qty'/></td>
-                                    <td><t t-esc="line.price_unit"/></td>
-                                    <td><t t-esc="line.delivery_charge"/></td>
-                                    <td><t t-esc="line.price_subtotal"/></td>
-                                </tr>
-                            </t>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="6" style="text-align: right;"><strong>Total:</strong></td>
-                                <td id="total-sum"><t t-esc="rfq.amount_total"/></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                    <br/>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Summary -->
+                    <div class="d-flex justify-content-end mt-4">
+                        <div class="bg-primary text-white rounded-3 p-4 shadow-sm">
+                            <div class="d-flex align-items-center gap-4">
+                                <span class="fs-5">Grand Total:</span>
+                                <span class="display-6 fw-bold">$<t t-esc="rfq.amount_total"/></span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
+
+                <style>
+                    .prose-scroll::-webkit-scrollbar {
+                    width: 6px;
+                    }
+                    .prose-scroll::-webkit-scrollbar-track {
+                    background: #f1f1f1;
+                    }
+                    .prose-scroll::-webkit-scrollbar-thumb {
+                    background: #888;
+                    border-radius: 4px;
+                    }
+                    .line-clamp-2 {
+                    display: -webkit-box;
+                    -webkit-line-clamp: var(--line-clamp);
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                    }
+                    .object-fit-cover {
+                    object-fit: cover;
+                    }
+                </style>
+
             </t>
         </template>
     </data>
