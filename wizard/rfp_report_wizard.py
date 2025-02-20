@@ -49,7 +49,6 @@ class RFPReportWizard(models.TransientModel):
             ('required_date', '>=', self.start_date),
             ('required_date', '<=', self.end_date)
         ])
-        print("accepted rfps",accepted_rfps)
         if not accepted_rfps:
             raise UserError(_('The selected supplier has no accepted RFPs.'))
 
@@ -80,10 +79,13 @@ class RFPReportWizard(models.TransientModel):
             'align': 'center',
             'valign': 'vcenter'
         })
-        date_format = workbook.add_format({'num_format': 'dd/mm/yyyy', 'border': 1, 'align': 'center', 'valign': 'vcenter'})
-        money_format = workbook.add_format({'num_format': '#,##0.00', 'border': 1, 'align': 'right', 'valign': 'vcenter'})
+        date_format = workbook.add_format(
+            {'num_format': 'dd/mm/yyyy', 'border': 1, 'align': 'center', 'valign': 'vcenter'})
+        money_format = workbook.add_format(
+            {'num_format': '#,##0.00', 'border': 1, 'align': 'right', 'valign': 'vcenter'})
         text_format = workbook.add_format({'border': 1, 'align': 'left', 'valign': 'vcenter'})
-        total_format = workbook.add_format({'bold': True, 'bg_color': '#D9E1F2', 'border': 1, 'align': 'right', 'valign': 'vcenter'})
+        total_format = workbook.add_format(
+            {'bold': True, 'bg_color': '#D9E1F2', 'border': 1, 'align': 'right', 'valign': 'vcenter'})
         self.logo = company.logo
 
         # --- Section 1: Company Logo and Supplier Information ---
@@ -105,6 +107,9 @@ class RFPReportWizard(models.TransientModel):
             # Extend with bank details if available:
             ['Bank Name', self.supplier_id.bank_ids and self.supplier_id.bank_ids[0].bank_id.name or ''],
             ['Account Name', self.supplier_id.bank_ids and self.supplier_id.bank_ids[0].acc_number or ''],
+            ['Account Number', self.supplier_id.bank_ids and self.supplier_id.bank_ids[0].acc_number or ''],
+            ['IBAN No.', self.supplier_id.bank_ids and self.supplier_id.bank_ids[0].iban or ''],
+            ['SWIFT Code', self.supplier_id.bank_ids and self.supplier_id.bank_ids[0].swift_code or ''],
         ]
         row = 2
         for label, value in supplier_info:
@@ -127,7 +132,8 @@ class RFPReportWizard(models.TransientModel):
 
             # Use create_date as RFP date; ensure it's a datetime object
             if rfp.create_date:
-                rfp_date = fields.Datetime.from_string(rfp.create_date) if isinstance(rfp.create_date, str) else rfp.create_date
+                rfp_date = fields.Datetime.from_string(rfp.create_date) if isinstance(rfp.create_date,
+                                                                                      str) else rfp.create_date
                 worksheet.write_datetime(row, 1, rfp_date, date_format)
             else:
                 worksheet.write(row, 1, '', text_format)
@@ -164,7 +170,6 @@ class RFPReportWizard(models.TransientModel):
                 ('rfp_id', '=', rfp.id),
                 ('state', '=', 'purchase')  # Assuming 'purchase' means the RFQ is accepted
             ], limit=1)  # Assuming 'purchase' means accepted
-            print("accepted rfq",accepted_rfq)
 
             if accepted_rfq:
                 for line in accepted_rfq.order_line:
@@ -176,9 +181,10 @@ class RFPReportWizard(models.TransientModel):
                             'delivery_charge': 0,
                             'subtotal_price': 0,
                         }
-                    product_groups[product]['product_qty'] += line.product_qty  # Use correct quantity field from RFQ line
+                    product_groups[product]['product_qty'] += line.product_qty  # Correct quantity field from RFQ line
                     product_groups[product]['unit_price'] += line.price_unit  # Unit price from RFQ line
-                    product_groups[product]['delivery_charge'] += line.delivery_charge or 0  # Assuming this field exists
+                    product_groups[product][
+                        'delivery_charge'] += line.delivery_charge or 0  # Assuming this field exists
                     product_groups[product]['subtotal_price'] += line.price_total  # Subtotal price from RFQ line
 
         total_product_total = 0.0
@@ -220,6 +226,8 @@ class RFPReportWizard(models.TransientModel):
             'url': '/web/content/%s/%s/%s?download=true' % (self._name, self.id, 'excel_report'),
             'target': 'self',
         }
+
+
 
     def action_generate_html_preview(self):
         approved_rfps = self._validate_inputs()
