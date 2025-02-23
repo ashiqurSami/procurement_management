@@ -49,6 +49,21 @@ class RFP(models.Model):
         'rfp_id',
         string='Product Lines'
     )
+
+    selected_product_ids = fields.Many2many(
+        'product.product',
+        string='Selected Products',
+        compute='_compute_selected_products',
+    )
+
+    @api.depends('product_line_ids.product_id')
+    def _compute_selected_products(self):
+        """
+        Compute the selected product IDs based on the product lines.
+        """
+        for rfp in self:
+            rfp.selected_product_ids = rfp.product_line_ids.mapped('product_id')
+
     rfq_line_ids = fields.One2many(
         'purchase.order',
         'rfp_id',

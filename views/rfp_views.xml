@@ -76,6 +76,7 @@
                             <field name="product_line_ids"
                                    readonly="status != 'draft'"
                                    create="status == 'draft'">
+                            
                                 <tree editable="bottom">
                                     <field name="product_id" />
                                     <field name="description"/>
@@ -164,6 +165,37 @@
             </tree>
         </field>
     </record>
+
+<record id="view_rfp_search" model="ir.ui.view">
+    <field name="name">procurement.management.rfp.search</field>
+    <field name="model">procurement_management.rfp</field>
+    <field name="arch" type="xml">
+        <search string="RFP Search">
+            <!-- Search Fields -->
+            <field name="rfp_id_seq" string="RFP Reference"/>
+            <field name="name" string="RFP Name"/>
+
+            <!-- Filters -->
+            <filter string="Draft" name="filter_draft" domain="[('status', '=', 'draft')]"/>
+            <filter string="Submitted" name="filter_submitted" domain="[('status', '=', 'submitted')]"/>
+            <filter string="Approved" name="filter_approved" domain="[('status', '=', 'approved')]"/>
+            <filter string="Required Date" name="required_date" date="required_date"/>
+
+            <!-- Group By Options -->
+            <group expand="1" string="Group By">
+                <filter string="Status" name="group_by_status" context="{'group_by': 'status'}"/>
+                <filter string="Approved Supplier" name="group_by_supplier" context="{'group_by': 'approved_supplier'}"/>
+                <filter string="Required Date" name="group_by_required_date" context="{'group_by': 'required_date'}"/>
+            </group>
+
+            <!-- Search Panel -->
+            <searchpanel>
+                <field name="status" string="Status" icon="fa-filter"/>
+                <field name="approved_supplier" string="Approved Supplier" icon="fa-user"/>
+            </searchpanel>
+        </search>
+    </field>
+</record>
 
 
 <record id="view_rfp_graph" model="ir.ui.view">

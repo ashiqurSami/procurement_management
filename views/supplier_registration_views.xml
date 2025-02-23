@@ -1,24 +1,46 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
+    <record id="view_supplier_registration_search" model="ir.ui.view">
+    <field name="name">procurement.management.supplier.registration.search</field>
+    <field name="model">procurement_management.supplier.registration</field>
+    <field name="arch" type="xml">
+        <search string="Supplier Registration">
+            <!-- Filters -->
+            <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+            <filter string="Submitted" name="submitted" domain="[('state', '=', 'submitted')]"/>
+            <filter string="Reviewed" name="reviewed" domain="[('state', '=', 'reviewed')]"/>
+            <filter string="Approved" name="approved" domain="[('state', '=', 'approved')]"/>
+            <filter string="Rejected" name="rejected" domain="[('state', '=', 'rejected')]"/>
+            <filter string="Blacklisted" name="blacklisted" domain="[('state', '=', 'blacklisted')]"/>
+            
+            <!-- Filter: Records Updated by Current User -->
+            <filter string="Updated by Me" name="updated_by_me" domain="[('write_uid', '=', uid)]"/>
 
-    <record id="procurement_management_supplier_registration_view_search" model="ir.ui.view">
-        <field name="name">procurement.management.supplier.registration.view.search</field>
-        <field name="model">procurement_management.supplier.registration</field>
-        <field name="arch" type="xml">
-            <search string="Supplier Registration">
-                <field name="company_name"/>
-                <field name="email"/>
-                <field name="phone"/>
-                <field name="trade_license_number"/>
-                <field name="tax_identification_number"/>
-                <field name="expiry_date"/>
-                <group expand="1" string="Group By">
-                    <filter string="Approval Status" name="approval_status" context="{'group_by':'state'}"/>
-                </group>
-                <filter string="Waiting for approval" name="submitted" domain="[('state','=','submitted')]"/>
-            </search>
-        </field>
-    </record>
+            <!-- Group By Options -->
+            <group expand="1" string="Group By">
+                <filter string="State" name="group_by_state" context="{'group_by': 'state'}"/>
+                <filter string="Company Category" name="group_by_company_category" context="{'group_by': 'company_type_category'}"/>
+                <filter string="Reviewer" name="group_by_reviewer" context="{'group_by': 'reviewer_id'}"/>
+                <filter string="Approver" name="group_by_approver" context="{'group_by': 'approver_id'}"/>
+                <filter string="Certifying Body" name="group_by_certifying_body" context="{'group_by': 'certifying_body'}"/>
+            </group>
+
+            <!-- Search Fields -->
+            <field name="company_name"/>
+            <field name="email"/>
+            <field name="phone"/>
+            <field name="company_type_category"/>
+            <field name="trade_license_number"/>
+            <field name="tax_identification_number"/>
+            <field name="commencement_date"/>
+            <field name="expiry_date"/>
+            <field name="state"/>
+            <field name="reviewer_id"/>
+            <field name="approver_id"/>
+            <field name="certifying_body"/>
+        </search>
+    </field>
+</record>
 
     <record id="procurement_management_supplier_registration_view_form" model="ir.ui.view">
         <field name="name">procurement.management.supplier.registration.view.form.base</field>
@@ -179,77 +201,78 @@
     </record>
 
 
-    <record id="procurement_management_supplier_registration_view_kanban" model="ir.ui.view">
-        <field name="name">procurement_management.supplier.registration.kanban</field>
-        <field name="model">procurement_management.supplier.registration</field>
-        <field name="arch" type="xml">
-            <kanban class="o_kanban_mobile" default_group_by="state" records_draggable="false" quick_create="false">
-                <field name="company_name"/>
-                <field name="email"/>
-                <field name="phone"/>
-                <field name="state"/>
-                <field name="company_type_category"/>
-                <field name="trade_license_number"/>
-                <field name="commencement_date"/>
-                <field name="expiry_date"/>
-                <templates>
-                    <t t-name="kanban-box">
-                        <!-- Kanban Card Design -->
-                        <div class="oe_kanban_global_click o_kanban_record">
-                            <!-- Card Header -->
-                            <div class="o_kanban_record_header bg-info text-white p-2">
-                                <strong>
-                                    <span t-esc="record.company_name.raw_value"/>
-                                </strong>
-                                <small class="float-right">
-                                    <i class="fa fa-building" title="Company Type"/>
-                                    <span t-esc="record.company_type_category.raw_value"/>
-                                </small>
+   <record id="procurement_management_supplier_registration_view_kanban" model="ir.ui.view">
+    <field name="name">procurement_management.supplier.registration.kanban</field>
+    <field name="model">procurement_management.supplier.registration</field>
+    <field name="arch" type="xml">
+        <kanban class="o_kanban_mobile" default_group_by="state" records_draggable="true" quick_create="false">
+            <field name="company_name"/>
+            <field name="email"/>
+            <field name="phone"/>
+            <field name="state"/>
+            <field name="company_type_category"/>
+            <field name="trade_license_number"/>
+            <field name="commencement_date"/>
+            <field name="expiry_date"/>
+            <templates>
+                <t t-name="kanban-box">
+                    <!-- Kanban Card Design -->
+                    <div class="oe_kanban_global_click o_kanban_record">
+                        <!-- Card Header -->
+                        <div class="o_kanban_record_header bg-info text-white p-2 d-flex justify-content-between align-items-center">
+                            <strong>
+                                <span t-esc="record.company_name.raw_value"/>
+                            </strong>
+                            <small>
+                                <i class="fa fa-building mr-2" title="Company Type"/> <!-- Added mr-2 for spacing -->
+                                <span t-esc="record.company_type_category.raw_value"/>
+                            </small>
+                        </div>
+
+                        <!-- Card Body -->
+                        <div class="o_kanban_record_body p-2">
+                            <!-- Company Details -->
+                            <div class="mb-2">
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="fa fa-envelope mr-2" title="Email"/> <!-- Added mr-2 for spacing -->
+                                    <span t-esc="record.email.raw_value"/>
+                                </div>
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="fa fa-phone mr-2" title="Phone"/> <!-- Added mr-2 for spacing -->
+                                    <span t-esc="record.phone.raw_value"/>
+                                </div>
                             </div>
 
-                            <!-- Card Body -->
-                            <div class="o_kanban_record_body p-2">
-                                <!-- Company Details -->
-                                <div class="row mb-2">
-                                    <div class="col">
-                                        <i class="fa fa-envelope" title="Email"/>
-                                        <span t-esc="record.email.raw_value"/>
-                                    </div>
-                                    <div class="col">
-                                        <i class="fa fa-phone" title="Phone"/>
-                                        <span t-esc="record.phone.raw_value"/>
-                                    </div>
+                            <!-- Trade License and Dates -->
+                            <div class="mb-2">
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="fa fa-id-card ml-2 mr-2" title="Trade License"/> <!-- Added mr-2 for spacing -->
+                                    <span t-esc="record.trade_license_number.raw_value"/>
                                 </div>
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="fa fa-calendar mr-2" title="Commencement Date"/> <!-- Added mr-2 for spacing -->
+                                    <span t-esc="record.commencement_date.raw_value"/>
+                                </div>
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="fa fa-calendar-times mr-2" title="Expiry Date"/> <!-- Added mr-2 for spacing -->
+                                    <span t-esc="record.expiry_date.raw_value"/>
+                                </div>
+                            </div>
 
-                                <!-- Trade License and Dates -->
-                                <div class="row mb-2">
-                                    <div class="col">
-                                        <i class="fa fa-id-card" title="Trade License"/>
-                                        <span t-esc="record.trade_license_number.raw_value"/>
-                                    </div>
-                                    <div class="col">
-                                        <i class="fa fa-calendar" title="Commencement Date"/>
-                                        <span t-esc="record.commencement_date.raw_value"/>
-                                    </div>
-                                    <div class="col">
-                                        <i class="fa fa-calendar-times" title="Expiry Date"/>
-                                        <span t-esc="record.expiry_date.raw_value"/>
-                                    </div>
-                                </div>
-
-                                <!-- State Progress Bar -->
-                                <div class="progress mb-2">
-                                    <div t-attf-class="progress-bar bg-{{ {'draft': 'secondary', 'submitted': 'info', 'recommended': 'warning', 'approved': 'success', 'rejected': 'danger', 'blacklisted': 'dark'}[record.state.raw_value] }}" role="progressbar" t-attf-style="width: {{ {'draft': '20%', 'submitted': '40%', 'recommended': '60%', 'approved': '100%', 'rejected': '100%', 'blacklisted': '100%'}[record.state.raw_value] }}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
-                                        <span t-esc="record.state.raw_value"/>
-                                    </div>
-                                </div>
+                            <!-- State Badge -->
+                            <div class="d-flex justify-content-center">
+                                <span t-attf-class="badge badge-{{ {'draft': 'secondary', 'submitted': 'info', 'recommended': 'warning', 'approved': 'success', 'rejected': 'danger', 'blacklisted': 'dark'}[record.state.raw_value] }}">
+                                    <span t-esc="record.state.raw_value"/>
+                                </span>
                             </div>
                         </div>
-                    </t>
-                </templates>
-            </kanban>
-        </field>
-    </record>
+                    </div>
+                </t>
+            </templates>
+        </kanban>
+    </field>
+</record>
+
 
     <record id="action_procurement_management_supplier_registration" model="ir.actions.act_window">
         <field name="name">Supplier Registration</field>

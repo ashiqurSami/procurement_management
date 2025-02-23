@@ -1,4 +1,5 @@
 from odoo import api,fields,models
+from ..utils.mail_utils import notify_supplier_upon_rejection_or_blacklisting
 
 class RejectBlacklistWizard(models.TransientModel):
     _name="reject.blacklist.wizard"
@@ -27,3 +28,5 @@ class RejectBlacklistWizard(models.TransientModel):
                 'state' : 'rejected',
                 'comments' : self.comments
             })
+
+        notify_supplier_upon_rejection_or_blacklisting(self,supplier)

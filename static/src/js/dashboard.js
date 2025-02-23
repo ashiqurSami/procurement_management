@@ -16,8 +16,12 @@ export class SupplierDashboard extends Component {
 
         this.chartRefBar = useRef("chartBar");
         this.chartRefPie = useRef("chartPie");
+        this.chartRefLine = useRef("chartLine");
+        this.chartRefDoughnut = useRef("chartDoughnut");
         this.chartInstanceBar = null;
         this.chartInstancePie = null;
+        this.chartInstanceLine = null;
+        this.chartInstanceDoughnut = null;
 
         onWillStart(async () => {
             await loadJS("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js");
@@ -57,6 +61,8 @@ export class SupplierDashboard extends Component {
     renderCharts() {
         this.clearCanvas(this.chartRefBar);
         this.clearCanvas(this.chartRefPie);
+        this.clearCanvas(this.chartRefLine);
+        this.clearCanvas(this.chartRefDoughnut);
 
         if (this.chartInstanceBar) {
             this.chartInstanceBar.destroy();
@@ -66,12 +72,23 @@ export class SupplierDashboard extends Component {
             this.chartInstancePie.destroy();
             this.chartInstancePie = null;
         }
+        if (this.chartInstanceLine) {
+            this.chartInstanceLine.destroy();
+            this.chartInstanceLine = null;
+        }
+        if (this.chartInstanceDoughnut) {
+            this.chartInstanceDoughnut.destroy();
+            this.chartInstanceDoughnut = null;
+        }
 
         const ctxBar = this.chartRefBar.el.getContext("2d");
         const ctxPie = this.chartRefPie.el.getContext("2d");
+        const ctxLine = this.chartRefLine.el.getContext("2d");
+        const ctxDoughnut = this.chartRefDoughnut.el.getContext("2d");
 
         const labels = this.state.metrics.productBreakdown.map(item => item.name);
         const quantities = this.state.metrics.productBreakdown.map(item => item.quantity);
+        const amounts = this.state.metrics.productBreakdown.map(item => item.quantity * 100); // Assuming a fixed price for simplicity
 
         // Bar Chart
         this.chartInstanceBar = new Chart(ctxBar, {
@@ -105,6 +122,47 @@ export class SupplierDashboard extends Component {
                 datasets: [{
                     label: "Product Distribution",
                     data: quantities,
+                    backgroundColor: ["#ff6384", "#36a2eb", "#ffce56", "#4bc0c0", "#9966ff"],
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+            },
+        });
+
+        // Line Chart
+        this.chartInstanceLine = new Chart(ctxLine, {
+            type: "line",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "RFQ Trend",
+                    data: quantities,
+                    borderColor: "rgba(75, 192, 192, 1)",
+                    borderWidth: 2,
+                    fill: false,
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                    },
+                },
+            },
+        });
+
+        // Doughnut Chart
+        this.chartInstanceDoughnut = new Chart(ctxDoughnut, {
+            type: "doughnut",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Amount Distribution",
+                    data: amounts,
                     backgroundColor: ["#ff6384", "#36a2eb", "#ffce56", "#4bc0c0", "#9966ff"],
                 }],
             },

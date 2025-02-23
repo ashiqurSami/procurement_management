@@ -97,12 +97,14 @@ html, body {
 
 .product-breakdown {
     margin-bottom: 30px;
+    text-align: center;
 }
 
 .product-grid {
     display: flex;
     flex-wrap: wrap;
     gap: 15px;
+    justify-content: center;
 }
 
 .product-card {
@@ -192,3 +194,33 @@ html, body {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 2px solid rgba(106, 17, 203, 0.5);  
 }
+
+.charts-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 charts per row */
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.chart-box {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    max-height: 500px;
+    border: 1px solid #bbb;
+}
+
+.chart-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.chart-box h4 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 20px;
+    font-weight: bold;
+}
+

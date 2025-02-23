@@ -13,7 +13,6 @@
             can recommend, reject or blacklist the application
         </field>
         <field name="category_id" ref="module_category_procurement_management"/>
-        <!-- <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/> -->
     </record>
 
     <!-- Define the Approver group -->
@@ -23,8 +22,8 @@
             They can recommend, reject or blacklist the application
         </field>
         <field name="category_id" ref="module_category_procurement_management"/>
-        <!-- <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/> -->
     </record>
+    
     <record id="procure_management_rule_reviewer" model="ir.rule">
         <field name="name">Reviewer Rule</field>
         <field name="model_id" ref="model_procurement_management_rfp"/>
