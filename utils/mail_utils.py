@@ -83,3 +83,30 @@ def notify_reviewer_upon_rfp_rejection(self):
     template=self.env.ref('procurement_management.email_template_to_notify_reviewer_upon_rfp_rejection').sudo()
     template.with_context(**context).send_mail(reviewer.id)
 
+
+def notify_reviewer_upon_supplier_registration(self,new_supplier):
+    reviewer_group_users=get_reviewer_group_users(self)
+    template = self.env.ref('procurement_management.email_template_form_submitted').sudo()
+    context={
+            'name':new_supplier.company_name,
+            'phone':new_supplier.phone,
+            'category':new_supplier.company_type_category
+        }
+    for reviewer in reviewer_group_users:
+        if reviewer.email:
+            template.with_context(**context).send_mail(reviewer.id)
+
+
+def notify_supplier_upon_rejection_or_blacklisting(self,supplier):
+    context={
+        'company_name':self.env.user.company_id.name,
+        'company_email':self.env.user.company_id.email,
+        'action': 'rejected' if supplier.state=='rejected' else 'blacklisted',
+        'reason':supplier.comments,
+        'email_from':self.env.user.company_id.email,
+        'user_name':self.env.user.name,
+        'company_phone':self.env.user.company_id.phone
+    }
+    template=self.env.ref('procurement_management.email_template_supplier_registration_rejection_or_blacklisting').sudo()
+    template.with_context(**context).send_mail(supplier.id,force_send=True)
+

@@ -5,8 +5,7 @@ from odoo import api, http, modules,fields
 from odoo.fields import Datetime
 from odoo.http import request, Response
 from datetime import datetime, timedelta
-
-
+from ..utils.mail_utils import notify_reviewer_upon_supplier_registration
 
 
 class ProcurementManagement(http.Controller):
@@ -154,10 +153,14 @@ class ProcurementManagement(http.Controller):
                 error_list.append("Trade License Number Should Be Of 8-13 Digits And All Alphanumeric Digits")
             if kw.get('expiry_date') and fields.Date.to_date(kw.get('expiry_date')) <= fields.date.today():
                 error_list.append("Expiry Date Should Be Greater Than Today")
-            if not kw.get('company_name'):
-                error_list.append("Company Name is mandatory")
-            if not kw.get('email'):
-                error_list.append("Company Email is mandatory")
+            required_fields = {
+                "company_name": "Company Name is mandatory",
+                "email": "Company Email is mandatory",
+                "bank_name": "Bank Name is mandatory",
+                "bank_address": "Bank Address is mandatory",
+                "account_number": "Account Number is mandatory",
+            }
+            error_list.extend(message for field,message in required_fields.items() if not kw.get(field))
             if kw.get('email'):
                 already_exists = request.env['res.partner'].sudo().search([('email', '=', kw.get('email'))])
                 if already_exists:
@@ -180,26 +183,7 @@ class ProcurementManagement(http.Controller):
                 if new_supplier:
                     vals['state'] = 'submitted'
                     success_list.append("Supplier Registered Successfully")
-
-                    # Fetch the "Reviewer" group and its users
-                    reviewer_group = request.env['res.groups'].sudo().search([('name', '=', 'Reviewer')], limit=1)
-                    reviewer_group_users = reviewer_group.users
-
-                    # Fetch the email template
-                    template = request.env.ref('procurement_management.email_template_form_submitted').sudo()
-                    context={
-                        'name':new_supplier.company_name,
-                        'phone':new_supplier.phone,
-                        'category':new_supplier.company_type_category
-                    }
-
-                    # Send email to each reviewer
-                    for reviewer in reviewer_group_users:
-                        print(reviewer.email)
-                        print(reviewer.login)
-                        if reviewer.email:
-                            template.with_context(**context).send_mail(reviewer.id, force_send=True)
-
+                    notify_reviewer_upon_supplier_registration(request,new_supplier)
 
                 if file_vals:
                     new_supplier.write(file_vals)

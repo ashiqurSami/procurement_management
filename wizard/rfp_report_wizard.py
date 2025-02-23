@@ -108,8 +108,8 @@ class RFPReportWizard(models.TransientModel):
             ['Bank Name', self.supplier_id.bank_ids and self.supplier_id.bank_ids[0].bank_id.name or ''],
             ['Account Name', self.supplier_id.bank_ids and self.supplier_id.bank_ids[0].acc_number or ''],
             ['Account Number', self.supplier_id.bank_ids and self.supplier_id.bank_ids[0].acc_number or ''],
-            ['IBAN No.', self.supplier_id.bank_ids and self.supplier_id.bank_ids[0].iban or ''],
-            ['SWIFT Code', self.supplier_id.bank_ids and self.supplier_id.bank_ids[0].swift_code or ''],
+            ['IBAN No.', self.supplier_id.bank_ids and self.supplier_id.bank_ids[0].bank_id and self.supplier_id.bank_ids[0].bank_id.iban or ''],
+            ['SWIFT Code', self.supplier_id.bank_ids and self.supplier_id.bank_ids[0].bank_id and self.supplier_id.bank_ids[0].bank_id.bank_swift_code or ''],
         ]
         row = 2
         for label, value in supplier_info:
@@ -156,11 +156,12 @@ class RFPReportWizard(models.TransientModel):
 
         # --- Section 3: Grouped Product Lines ---
         row += 2
-        worksheet.write(row, 0, 'Product', header_format)
-        worksheet.write(row, 1, 'Quantity', header_format)
-        worksheet.write(row, 2, 'Unit Price', header_format)
-        worksheet.write(row, 3, 'Delivery Charge', header_format)
-        worksheet.write(row, 4, 'Subtotal', header_format)
+        worksheet.write(row, 0, 'RFP ID', header_format)
+        worksheet.write(row, 1, 'Product', header_format)
+        worksheet.write(row, 2, 'Quantity', header_format)
+        worksheet.write(row, 3, 'Unit Price', header_format)
+        worksheet.write(row, 4, 'Delivery Charge', header_format)
+        worksheet.write(row, 5, 'Subtotal', header_format)
         row += 1
 
         product_groups = {}
@@ -168,37 +169,64 @@ class RFPReportWizard(models.TransientModel):
         for rfp in accepted_rfps:
             accepted_rfq = self.env['purchase.order'].search([
                 ('rfp_id', '=', rfp.id),
-                ('state', '=', 'purchase')  # Assuming 'purchase' means the RFQ is accepted
-            ], limit=1)  # Assuming 'purchase' means accepted
+                ('state', '=', 'purchase')
+            ], limit=1)
 
             if accepted_rfq:
                 for line in accepted_rfq.order_line:
+                    rfp_id = rfp.rfp_id_seq
                     product = line.product_id.name
-                    if product not in product_groups:
-                        product_groups[product] = {
+                    unit_price = line.price_unit  # Consider unit price for grouping
+
+                    key = (rfp_id, product, unit_price)  # Group by RFP ID + Product + Unit Price
+                    
+                    if key not in product_groups:
+                        product_groups[key] = {
+                            'rfp_id': rfp_id,
+                            'product': product,
                             'product_qty': 0,
-                            'unit_price': 0,
+                            'unit_price': unit_price,
                             'delivery_charge': 0,
                             'subtotal_price': 0,
                         }
-                    product_groups[product]['product_qty'] += line.product_qty  # Correct quantity field from RFQ line
-                    product_groups[product]['unit_price'] += line.price_unit  # Unit price from RFQ line
-                    product_groups[product][
-                        'delivery_charge'] += line.delivery_charge or 0  # Assuming this field exists
-                    product_groups[product]['subtotal_price'] += line.price_total  # Subtotal price from RFQ line
+
+                    product_groups[key]['product_qty'] += line.product_qty
+                    product_groups[key]['delivery_charge'] += line.delivery_charge or 0
+                    product_groups[key]['subtotal_price'] += line.price_total
+
+        # Convert grouped data into a structured list by RFP ID
+        rfp_sorted_data = {}
+        for key, values in product_groups.items():
+            rfp_id = key[0]
+            if rfp_id not in rfp_sorted_data:
+                rfp_sorted_data[rfp_id] = []
+            rfp_sorted_data[rfp_id].append(values)
 
         total_product_total = 0.0
-        for product, values in product_groups.items():
-            worksheet.write(row, 0, product, text_format)
-            worksheet.write(row, 1, values['product_qty'], text_format)
-            worksheet.write(row, 2, values['unit_price'], money_format)
-            worksheet.write(row, 3, values['delivery_charge'], money_format)
-            worksheet.write(row, 4, values['subtotal_price'], money_format)
-            total_product_total += values['subtotal_price']
-            row += 1
 
-        worksheet.write(row, 3, 'Total', total_format)
-        worksheet.write(row, 4, total_product_total, total_format)
+        for rfp_id, products in rfp_sorted_data.items():
+            first_row = row
+            for i, values in enumerate(products):
+                if i == 0:
+                    worksheet.write(first_row, 0, rfp_id, text_format)  # Write RFP ID in the first row
+                else:
+                    worksheet.write_blank(row, 0, text_format)  # Leave empty for merged effect
+                
+                worksheet.write(row, 1, values['product'], text_format)
+                worksheet.write(row, 2, values['product_qty'], text_format)
+                worksheet.write(row, 3, values['unit_price'], money_format)
+                worksheet.write(row, 4, values['delivery_charge'], money_format)
+                worksheet.write(row, 5, values['subtotal_price'], money_format)
+                total_product_total += values['subtotal_price']
+                row += 1
+
+            # Merge RFP ID cells vertically
+            if len(products) > 1:
+                worksheet.merge_range(first_row, 0, row - 1, 0, rfp_id, text_format)
+
+        worksheet.write(row, 4, 'Total', total_format)
+        worksheet.write(row, 5, total_product_total, total_format)
+
 
         # --- Section 4: Current Company Contact Information ---
         row += 3
@@ -226,32 +254,67 @@ class RFPReportWizard(models.TransientModel):
             'url': '/web/content/%s/%s/%s?download=true' % (self._name, self.id, 'excel_report'),
             'target': 'self',
         }
-
-
+    
 
     def action_generate_html_preview(self):
         approved_rfps = self._validate_inputs()
 
         company = self.env.company
-        logo = company.logo and f"data:image/png;base64,{company.logo.decode()}" or ''
+        supplier = self.supplier_id
 
-        # Start HTML report content with company logo
+        # Fetch company logo using Odoo's web route
+        logo_url = f"/web/image?model=res.company&id={company.id}&field=logo" if company.logo else ''
+
+        # Supplier Info
+        supplier_info = [
+            ['Email', supplier.email or 'N/A'],
+            ['Phone', supplier.phone or 'N/A'],
+            ['Address', supplier.contact_address or 'N/A'],
+            ['TIN', supplier.vat or 'N/A'],
+            ['Bank Name', supplier.bank_ids and supplier.bank_ids[0].bank_id.name or 'N/A'],
+            ['Account Name', supplier.bank_ids and supplier.bank_ids[0].acc_number or 'N/A'],
+            ['Account Number', supplier.bank_ids and supplier.bank_ids[0].acc_number or 'N/A'],
+            ['IBAN No.', supplier.bank_ids and supplier.bank_ids[0].bank_id and supplier.bank_ids[0].bank_id.iban or 'N/A'],
+            ['SWIFT Code', supplier.bank_ids and supplier.bank_ids[0].bank_id and supplier.bank_ids[0].bank_id.bank_swift_code or 'N/A'],
+        ]
+
         html_content = f"""
         <div style="font-family: Arial, sans-serif; padding: 10px;">
-            <div style="text-align: center; margin-bottom: 20px;">
-                <img src="{logo}" alt="Company Logo" style="height: 80px;"/>
-                <h2 style="color: #4F81BD;">RFP Report for {self.supplier_id.name}</h2>
-                <p><strong>Date Range:</strong> {self.start_date.strftime('%d-%m-%Y')} to {self.end_date.strftime('%d-%m-%Y')}</p>
-                <p><strong>Company:</strong> {company.name} | <strong>Email:</strong> {company.email or 'N/A'} | <strong>Phone:</strong> {company.phone or 'N/A'}</p>
-            </div>
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="text-align: left;">
+                        <img src="{logo_url}" alt="Company Logo" style="height: 60px;"/>
+                    </td>
+                    <td style="text-align: right; font-size: 18px; font-weight: bold;">
+                        Request for Proposal Report Preview
+                    </td>
+                </tr>
+            </table>
+            <hr style="border: 1px solid #000;">
 
-            <h3 style="background-color: #4F81BD; color: white; padding: 5px;">Approved RFPs</h3>
+            <h3 style="background-color: #4F81BD; color: white; padding: 5px;">Supplier Information</h3>
             <table border="1" cellpadding="5" cellspacing="0" width="100%" style="border-collapse: collapse;">
-                <tr style="background-color: #D9E1F2; text-align: center;">
+        """
+
+        for label, value in supplier_info:
+            html_content += f"""
+                <tr>
+                    <td style="font-weight: bold; width: 30%;">{label}</td>
+                    <td>{value}</td>
+                </tr>
+            """
+
+        html_content += "</table><br/>"
+
+        # Approved RFPs Section
+        html_content += """
+            <h3 style="background-color: #4F81BD; color: white; padding: 5px;">Approved RFPs</h3>
+            <table border="1" cellpadding="5" cellspacing="0" width="100%" style="border-collapse: collapse; text-align: center;">
+                <tr style="background-color: #D9E1F2;">
                     <th>RFP Number</th>
                     <th>Date</th>
                     <th>Required Date</th>
-                    <th>Total Amount</th>
+                    <th style="text-align: right;">Total Amount</th>
                 </tr>
         """
 
@@ -263,33 +326,34 @@ class RFPReportWizard(models.TransientModel):
             net_total += rfp.total_amount
 
             html_content += f"""
-                <tr style="text-align: center;">
+                <tr>
                     <td>{rfp.rfp_id_seq}</td>
                     <td>{rfp_date}</td>
                     <td>{req_date}</td>
-                    <td>{total_amount}</td>
+                    <td style="text-align: right;">{total_amount}</td>
                 </tr>
             """
 
         html_content += f"""
-            <tr style="background-color: #D9E1F2; font-weight: bold; text-align: right;">
-                <td colspan="3">Net Total</td>
-                <td>{net_total:,.2f}</td>
+            <tr style="background-color: #D9E1F2; font-weight: bold;">
+                <td colspan="3" style="text-align: right;">Net Total</td>
+                <td style="text-align: right;">{net_total:,.2f}</td>
             </tr>
             </table>
             <br/>
         """
 
-        # Product Summary Section
+        # Product Summary
         html_content += """
-            <h3 style="background-color: #4F81BD; color: white; padding: 5px;">Grouped Product Summary</h3>
-            <table border="1" cellpadding="5" cellspacing="0" width="100%" style="border-collapse: collapse;">
-                <tr style="background-color: #D9E1F2; text-align: center;">
+            <h3 style="background-color: #4F81BD; color: white; padding: 5px;">Product Summary</h3>
+            <table border="1" cellpadding="5" cellspacing="0" width="100%" style="border-collapse: collapse; text-align: center;">
+                <tr style="background-color: #D9E1F2;">
+                    <th>RFP ID</th>
                     <th>Product</th>
-                    <th>Quantity</th>
-                    <th>Unit Price</th>
-                    <th>Delivery Charge</th>
-                    <th>Subtotal</th>
+                    <th style="text-align: right;">Quantity</th>
+                    <th style="text-align: right;">Unit Price</th>
+                    <th style="text-align: right;">Delivery Charge</th>
+                    <th style="text-align: right;">Subtotal</th>
                 </tr>
         """
 
@@ -302,37 +366,47 @@ class RFPReportWizard(models.TransientModel):
 
             if accepted_rfq:
                 for line in accepted_rfq.order_line:
-                    product = line.product_id.name
-                    if product not in product_groups:
-                        product_groups[product] = {
+                    key = (rfp.rfp_id_seq, line.product_id.name, line.price_unit)
+
+                    if key not in product_groups:
+                        product_groups[key] = {
+                            'rfp_id': rfp.rfp_id_seq,
+                            'product': line.product_id.name,
                             'product_qty': 0,
-                            'unit_price': 0,
+                            'unit_price': line.price_unit,
                             'delivery_charge': 0,
                             'subtotal_price': 0,
                         }
-                    product_groups[product]['product_qty'] += line.product_qty
-                    product_groups[product]['unit_price'] += line.price_unit
-                    product_groups[product]['delivery_charge'] += line.delivery_charge or 0
-                    product_groups[product]['subtotal_price'] += line.price_total
+                    product_groups[key]['product_qty'] += line.product_qty
+                    product_groups[key]['delivery_charge'] += line.delivery_charge or 0
+                    product_groups[key]['subtotal_price'] += line.price_total
 
         total_product_total = 0.0
-        for product, values in product_groups.items():
+        for values in product_groups.values():
             total_product_total += values['subtotal_price']
             html_content += f"""
-                <tr style="text-align: center;">
-                    <td>{product}</td>
-                    <td>{values['product_qty']}</td>
-                    <td>{values['unit_price']:,.2f}</td>
-                    <td>{values['delivery_charge']:,.2f}</td>
-                    <td>{values['subtotal_price']:,.2f}</td>
+                <tr>
+                    <td>{values['rfp_id']}</td>
+                    <td>{values['product']}</td>
+                    <td style="text-align: right;">{values['product_qty']}</td>
+                    <td style="text-align: right;">{values['unit_price']:,.2f}</td>
+                    <td style="text-align: right;">{values['delivery_charge']:,.2f}</td>
+                    <td style="text-align: right;">{values['subtotal_price']:,.2f}</td>
                 </tr>
             """
 
         html_content += f"""
-            <tr style="background-color: #D9E1F2; font-weight: bold; text-align: right;">
-                <td colspan="4">Total</td>
-                <td>{total_product_total:,.2f}</td>
+            <tr style="background-color: #D9E1F2; font-weight: bold;">
+                <td colspan="5" style="text-align: right;">Total</td>
+                <td style="text-align: right;">{total_product_total:,.2f}</td>
             </tr>
+            </table>
+            
+            <h3 style="background-color: #4F81BD; color: white; padding: 5px;">Company Contact Information</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr><td style="font-weight: bold;">Company Email:</td><td>{company.email or 'N/A'}</td></tr>
+                <tr><td style="font-weight: bold;">Company Phone:</td><td>{company.phone or 'N/A'}</td></tr>
+                <tr><td style="font-weight: bold;">Company Address:</td><td>{company.street or 'N/A'}</td></tr>
             </table>
         </div>
         """
@@ -342,4 +416,9 @@ class RFPReportWizard(models.TransientModel):
             'type': 'ir.actions.client',
             'tag': 'reload',
         }
+
+
+
+
+
 

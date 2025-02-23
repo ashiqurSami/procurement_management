@@ -148,5 +148,36 @@
                 <p>Best Regards,<br/>Your Company</p>
             </field>
         </record>
+        
+        <record id="email_template_supplier_registration_rejection_or_blacklisting" model="mail.template">
+            <field name="name">Supplier Registration Rejection/Blacklisting</field>
+            <field name="model_id" ref="procurement_management.model_procurement_management_supplier_registration"/>
+            <field name="email_from">{{ctx.get('email_from')}}</field>
+            <field name="email_to">{{object.email}}</field>
+            <field name="subject">Decision Regarding Your Supplier Registration Form</field>
+            <field name="body_html" type="html">
+                    <p>Dear <t t-out="object.company_name or ''"/>,</p>
+                    
+                    <p>Thank you for submitting your supplier registration form and for your interest in partnering with <t t-out="ctx.get('company_name')"/>.</p>
+                    
+                    <p>
+                    After careful review and consideration, we regret to inform you that we will not be able to proceed with your registration at this time. 
+                    This decision was made based on our current business needs. Consequently, your application has been <t t-out="ctx.get('action')"/>, 
+                    and the reason is <t t-out="ctx.get('reason')"/>
+                    </p>
+                    
+                    <p>We value your interest in collaborating with us and encourage you to reach out if you have any questions or require further clarification.
+                     You may contact us at <t t-out="ctx.get('company_email')"/>.</p>
+                    
+                    <p>Thank you once again for your submission, and we wish you continued success in your endeavors.</p>
+                    
+                    <p>Best regards,<br/>
+                        <t t-out="ctx.get('user_name') or 'Adminstrator'"/><br/>
+                        <t t-out="ctx.get('company_name') or 'PMS'"/><br/>
+                        <t t-out="ctx.get('company_phone') or 'N/A'"/><br/>
+                    </p>
+         </field>  <!-- <field name="auto_delete" eval="False"/> --> 
+        </record>
+
     </data>
 </odoo>

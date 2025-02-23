@@ -58,16 +58,24 @@
             </div>
 
             <!-- Charts Section -->
-            <div class="charts-container">
-                <div class="chart-box">
-                    <h4>Product Quantities</h4>
-                    <canvas t-ref="chartBar"></canvas>
-                </div>
-                <div class="chart-box">
-                    <h4>Product Distribution</h4>
-                    <canvas t-ref="chartPie"></canvas>
-                </div>
-            </div>
+           <div class="charts-container">
+    <div class="chart-box">
+        <h4>Product Quantities</h4>
+        <canvas t-ref="chartBar"></canvas>
+    </div>
+    <div class="chart-box">
+        <h4>Product Quantity Distribution</h4>
+        <canvas t-ref="chartPie"></canvas>
+    </div>
+    <div class="chart-box">
+        <h4>RFQ Trend</h4>
+        <canvas t-ref="chartLine"></canvas>
+    </div>
+    <div class="chart-box">
+        <h4>Total Amount Distribution</h4>
+        <canvas t-ref="chartDoughnut"></canvas>
+    </div>
+</div>
             
         </div>
     </t>
