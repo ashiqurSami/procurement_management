@@ -293,18 +293,23 @@ class RFPReportWizard(models.TransientModel):
             <hr style="border: 1px solid #000;">
 
             <h3 style="background-color: #4F81BD; color: white; padding: 5px;">Supplier Information</h3>
-            <table border="1" cellpadding="5" cellspacing="0" width="100%" style="border-collapse: collapse;">
+            <div style="text-align: right;">
+                <table border="1" cellpadding="5" cellspacing="0" width="50%" style="border-collapse: collapse; margin-left: auto;">
         """
 
         for label, value in supplier_info:
             html_content += f"""
                 <tr>
-                    <td style="font-weight: bold; width: 30%;">{label}</td>
-                    <td>{value}</td>
+                    <td style="font-weight: bold; width: 30%; text-align: center;">{label}</td>
+                    <td style="text-align: center;">{value}</td>
                 </tr>
             """
 
-        html_content += "</table><br/>"
+        html_content += """
+                </table>
+            </div>
+            <br/>
+        """
 
         # Approved RFPs Section
         html_content += """
@@ -416,8 +421,6 @@ class RFPReportWizard(models.TransientModel):
             'type': 'ir.actions.client',
             'tag': 'reload',
         }
-
-
 
 
 
