@@ -5,6 +5,7 @@ from odoo.tools import groupby as groupbyelem
 from operator import itemgetter
 from ..utils.mail_utils import notify_reviewer_upon_quotation_submission
 from odoo.osv import expression
+from datetime import datetime
 
 
 class MyRFQPortal(CustomerPortal):
@@ -98,36 +99,79 @@ class MyRFQPortal(CustomerPortal):
 
         return request.render('procurement_management.rfq_submit_view_template',{'rfp':rfp})
 
-    @http.route(['/procurement_management/rfp/<int:rfp_id>/submit'], type='http', auth='user',methods=['POST'] ,website=True)
+    @http.route(['/procurement_management/rfp/<int:rfp_id>/submit'], type='http', auth='user', methods=['POST'],
+                website=True)
     def rfp_submit(self, rfp_id, **kw):
-        error_list=[]
-        success_list=[]
-        
-        rfp=request.env['procurement_management.rfp'].sudo().browse(rfp_id)
-        rfq_values={
+        error_list = []
+        success_list = []
+
+        rfp = request.env['procurement_management.rfp'].sudo().browse(rfp_id)
+
+        # Validate warranty period (cannot be negative)
+        warranty_period = int(kw.get('warranty_period', 0))
+        if warranty_period < 0:
+            error_list.append("Warranty period cannot be negative.")
+
+        # Validate expected delivery date (cannot be a past date)
+        expected_delivery_date = kw.get('expected_delivery_date')
+        if expected_delivery_date:
+            expected_delivery_date = datetime.strptime(expected_delivery_date, '%Y-%m-%d').date()
+            if expected_delivery_date < datetime.today().date():
+                error_list.append("Expected delivery date cannot be a past date.")
+        else:
+            error_list.append("Expected delivery date is required.")
+
+        # Validate unit price and delivery charge for each product line
+        for line in rfp.product_line_ids:
+            unit_price = float(kw.get(f'order_line_unit_price_{line.id}', 0))
+            delivery_charge = float(kw.get(f'order_line_delivery_charge_{line.id}', 0))
+
+            if unit_price < 0:
+                error_list.append(f"Unit price for product '{line.product_id.name}' cannot be negative.")
+            if delivery_charge < 0:
+                error_list.append(f"Delivery charge for product '{line.product_id.name}' cannot be negative.")
+
+        # If there are errors, redirect back to the form page with error messages
+        if error_list:
+            return request.render('procurement_management.rfp_form_view_template', {
+                'rfp': rfp,
+                'error_list': error_list,
+                'page_name':'rfp_id'
+            })
+
+        # If no errors, create the RFQ
+        rfq_values = {
             'rfp_id': rfp.id,
             'partner_id': request.env.user.partner_id.id,
-            'warranty_period': kw.get('warranty_period'),
-            'expected_delivery_date': kw.get('expected_delivery_date'),
-            'user_id':rfp.create_uid.id,
+            'warranty_period': warranty_period,
+            'expected_delivery_date': expected_delivery_date,
+            'user_id': rfp.create_uid.id,
         }
-        rfq=request.env['purchase.order'].sudo().create(rfq_values)
+        rfq = request.env['purchase.order'].sudo().create(rfq_values)
         success_list.append('RFQ submitted successfully.')
 
+        # Create RFQ lines
         for line in rfp.product_line_ids:
-            rfq_line={
-                'order_id':rfq.id,
-                'product_id':line.product_id.id,
-                'name':line.product_id.name,
-                'product_qty':line.quantity,
-                'price_unit':kw.get(f'order_line_unit_price_{line.id}'),
-                'delivery_charge':kw.get(f'order_line_delivery_charge_{line.id}'),
-                'date_planned':kw.get('expected_delivery_date')
+            rfq_line = {
+                'order_id': rfq.id,
+                'product_id': line.product_id.id,
+                'name': line.product_id.name,
+                'product_qty': line.quantity,
+                'price_unit': float(kw.get(f'order_line_unit_price_{line.id}', 0)),
+                'delivery_charge': float(kw.get(f'order_line_delivery_charge_{line.id}', 0)),
+                'date_planned': expected_delivery_date,
             }
             request.env['purchase.order.line'].sudo().create(rfq_line)
-            notify_reviewer_upon_quotation_submission(request,rfq)
 
-        return request.render('procurement_management.rfq_submit_view_template',{'rfp':rfp,'success_list':success_list,'page_name':'submit'})
+        # Notify reviewer upon successful submission
+        notify_reviewer_upon_quotation_submission(request, rfq)
+
+        # Redirect to the submit page
+        return request.render('procurement_management.rfq_submit_view_template', {
+            'rfp': rfp,
+            'success_list': success_list,
+            'page_name': 'submit'
+        })
 
     @http.route(['/procurement_management/my/rfqs', '/procurement_management/my/rfqs/page/<int:page>'], type='http', auth='user', website=True)
     def rfqs_list(self, page=1, sortby=None, search=None, search_in='all', groupby='none', **kw):

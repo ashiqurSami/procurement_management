@@ -201,7 +201,12 @@
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label fw-semibold" for="email">Company Email</label>
-                                                <input type="email" class="form-control shadow-sm" id="email" name="email" placeholder="Enter company email"/>
+                                                <input type="email" class="form-control shadow-sm" id="email"
+                                                       name="email" placeholder="Enter company email"
+                                                       t-att-value="request.session.get('verified_email')"
+                                                       readonly="1"
+                                                />
+
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label fw-semibold" for="company_type_category">Company Type</label>
@@ -234,7 +239,15 @@
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label fw-semibold" for="companyLogo">Company Logo</label>
-                                                <input type="file" class="form-control shadow-sm" id="companyLogo" name="company_logo" accept="image/*"/>
+                                                <input type="file" class="form-control shadow-sm" id="company_logo" name="company_logo" accept="image/*"/>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold" for="commencement_date">Commencement Date</label>
+                                                <input type="date" class="form-control shadow-sm" id="commencement_date" name="commencement_date"/>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold" for="expiry_date">Expiry Date</label>
+                                                <input type="date" class="form-control shadow-sm" id="expiry_date" name="expiry_date"/>
                                             </div>
                                         </div>
                                     </div>
@@ -254,6 +267,10 @@
                                                 <label class="form-label fw-semibold" for="contact_phone">Contact Phone</label>
                                                 <input type="tel" class="form-control shadow-sm" id="contact_phone" name="contact_phone" placeholder="Enter contact phone number"/>
                                             </div>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold" for="contact_person_address">Contact Person’s Address</label>
+                                                <input type="text" class="form-control shadow-sm" id="contact_address" name="contact_address" placeholder="Enter contact person's address"/>
+                                            </div>
                                         </div>
 
                                         <div class="col-md-4">
@@ -270,6 +287,10 @@
                                                 <label class="form-label fw-semibold" for="finance_contact_phone">Contact Phone</label>
                                                 <input type="tel" class="form-control shadow-sm" id="finance_contact_phone" name="finance_contact_phone" placeholder="Enter finance contact phone number"/>
                                             </div>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold" for="contact_person_address">Contact Person’s Address</label>
+                                                <input type="text" class="form-control shadow-sm" id="finance_contact_address" name="finance_contact_address" placeholder="Enter contact person's address"/>
+                                            </div>
                                         </div>
 
                                         <div class="col-md-4">
@@ -285,6 +306,10 @@
                                             <div class="mb-3">
                                                 <label class="form-label fw-semibold" for="authorized_person_phone">Contact Phone</label>
                                                 <input type="tel" class="form-control shadow-sm" id="authorized_person_phone" name="authorized_person_phone" placeholder="Enter authorized person phone"/>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold" for="contact_person_address">Authorized Person’s Address</label>
+                                                <input type="text" class="form-control shadow-sm" id="authhorized_person_address" name="authhorized_person_address" placeholder="Enter contact person's address"/>
                                             </div>
                                         </div>
                                     </div>
@@ -556,13 +581,13 @@
 
                             <t t-call="portal.portal_table">
                                 <thead style="background-color: #4A90E2; color: #fff;">
-                                        <tr>
-                                            <!-- <th style="width: 20%;">Name</th> -->
-                                            <th style="width: 20%;">RFP ID Seq</th>
-                                            <th style="width: 30%;">Status</th>
-                                            <th style="width: 15%;">Required Date</th>
+                                    <tr>
+                                        <!-- <th style="width: 20%;">Name</th> -->
+                                        <th style="width: 20%;">RFP ID Seq</th>
+                                        <th style="width: 30%;">Status</th>
+                                        <th style="width: 15%;">Required Date</th>
 
-                                        </tr>
+                                    </tr>
                                 </thead>
                                 <t t-foreach="group_rfps" t-as="group">
                                     <tbody>
@@ -594,100 +619,114 @@
         </template>
 
 
-    <template id="rfp_form_view_template" name="Portal RFP Form">
-    <t t-call="portal.portal_layout">
-        <t t-set="title" t-value="'Request for Proposal'"/>
-        <div class="d-flex justify-content-between">
-            <!-- Name on the top-left -->
-            <div>
-                <strong><span style="font-size: 1.5rem; font-weight: bold;">ID:</span></strong> <span style="font-size: 1.5rem; font-weight: bold;"><t t-esc="rfp.rfp_id_seq"/></span>
-            </div>
-            <div>
-                <strong>Status:</strong> <span class="badge bg-info"><t t-esc="rfp.status"/></span>
-            </div>
-        </div>
-        <br/>
-
-        <div class="container">
-            <form t-attf-action="/procurement_management/rfp/{{rfp.id}}/submit" method="POST">
-                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                <input type="hidden" name="rfp_id" t-att-value="rfp.id"/>
-                <div class="row">
-                    <div class="col-md-6">
-                        <label>Warranty Period (months)</label>
-                        <input type="number" name="warranty_period" class="form-control" required="required"/>
+        <template id="rfp_form_view_template" name="Portal RFP Form">
+            <t t-call="portal.portal_layout">
+                <t t-foreach="error_list" t-as="error">
+                    <div class="alert alert-danger" role="alert">
+                        <h4 class="alert-heading">Error!</h4>
+                        <t t-out="error"/>
                     </div>
-                    <div class="col-md-6">
-                        <label>Expected Delivery Date</label>
-                        <input type="date" name="expected_delivery_date" class="form-control" required="required"/>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <label>Terms and Conditions</label>
-                        <textarea name="notes" class="form-control"></textarea>
-                    </div>
-                </div>
-
-                <h3>Product Lines</h3>
-                <table class="table table-bordered mt-3">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Product</th>
-                            <th>Image</th>
-                            <th>Description</th>
-                            <th>Quantity</th>
-                            <th>Unit Price</th>
-                            <th>Delivery Charges</th>
-                            <th>Subtotal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <t t-foreach="rfp.product_line_ids" t-as="line">
-                            <tr>
-                                <td><t t-esc="line.product_id.name"/></td>
-                                <td>
-                                    <t t-if="line.product_id.image_1920">
-                                        <img t-att-src="image_data_uri(line.product_id.image_1920)"
-                                             class="img-thumbnail"
-                                             style="max-width:80px;"/>
-                                    </t>
-                                    <t t-else="">
-                                        <img src="/web/static/src/img/placeholder.png"
-                                             class="img-thumbnail"
-                                             style="max-width:80px;"/>
-                                    </t>
-                                </td>
-                                <td><t t-esc="line.description"/></td>
-                                <td>
-                                    <t t-esc='line.quantity'/>
-                                </td>
-                                <td>
-                                    <input type="number" name="unit_price" t-attf-name='order_line_unit_price_#{line.id}' t-att-value="line.unit_price" class="form-control" />
-                                </td>
-                                <td>
-                                    <input type="number" name="delivery_charge" t-attf-name='order_line_delivery_charge_#{line.id}' t-att-value="line.delivery_charges" class="form-control" />
-                                </td>
-                                <td><t t-esc="line.subtotal"/></td>
-                            </tr>
+                </t>
+                <t t-if="success_list">
+                    <div class="alert alert-success" role="alert">
+                        <h4 class="alert-heading">Success!</h4>
+                        <t t-foreach="success_list" t-as="success">
+                            <t t-out="success"/>
                         </t>
-                    </tbody>
-                    <!-- New row for total sum -->
-                    <tfoot>
-                        <tr>
-                            <td colspan="6" style="text-align: right;"><strong>Total:</strong></td>
-                            <td id="total-sum">0.00</td>
-                        </tr>
-                    </tfoot>
-                </table>
+                    </div>
+                </t>
+                <t t-set="title" t-value="'Request for Proposal'"/>
+                <div class="d-flex justify-content-between">
+                    <!-- Name on the top-left -->
+                    <div>
+                        <strong><span style="font-size: 1.5rem; font-weight: bold;">ID:</span></strong> <span style="font-size: 1.5rem; font-weight: bold;"><t t-esc="rfp.rfp_id_seq"/></span>
+                    </div>
+                    <div>
+                        <strong>Status:</strong> <span class="badge bg-info"><t t-esc="rfp.status"/></span>
+                    </div>
+                </div>
                 <br/>
-                <button type="submit" class="btn btn-success">Submit RFQ</button>
-                <br/>
-            </form>
-        </div>
-    </t>
-    <script src="/procurement_management/static/src/js/rfq_form.js">RFQ Form</script>
-</template>
+
+                <div class="container">
+                    <form t-attf-action="/procurement_management/rfp/{{rfp.id}}/submit" method="POST">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="hidden" name="rfp_id" t-att-value="rfp.id"/>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Warranty Period (months)</label>
+                                <input type="number" name="warranty_period" class="form-control" required="required"/>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Expected Delivery Date</label>
+                                <input type="date" name="expected_delivery_date" class="form-control" required="required"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>Terms and Conditions</label>
+                                <textarea name="notes" class="form-control"></textarea>
+                            </div>
+                        </div>
+
+                        <h3>Product Lines</h3>
+                        <table class="table table-bordered mt-3">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Image</th>
+                                    <th>Description</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>Delivery Charges</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="rfp.product_line_ids" t-as="line">
+                                    <tr>
+                                        <td><t t-esc="line.product_id.name"/></td>
+                                        <td>
+                                            <t t-if="line.product_id.image_1920">
+                                                <img t-att-src="image_data_uri(line.product_id.image_1920)"
+                                                     class="img-thumbnail"
+                                                     style="max-width:80px;"/>
+                                            </t>
+                                            <t t-else="">
+                                                <img src="/web/static/src/img/placeholder.png"
+                                                     class="img-thumbnail"
+                                                     style="max-width:80px;"/>
+                                            </t>
+                                        </td>
+                                        <td><t t-esc="line.description"/></td>
+                                        <td>
+                                            <t t-esc='line.quantity'/>
+                                        </td>
+                                        <td>
+                                            <input type="number" name="unit_price" t-attf-name='order_line_unit_price_#{line.id}' t-att-value="line.unit_price" class="form-control" />
+                                        </td>
+                                        <td>
+                                            <input type="number" name="delivery_charge" t-attf-name='order_line_delivery_charge_#{line.id}' t-att-value="line.delivery_charges" class="form-control" />
+                                        </td>
+                                        <td><t t-esc="line.subtotal"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                            <!-- New row for total sum -->
+                            <tfoot>
+                                <tr>
+                                    <td colspan="6" style="text-align: right;"><strong>Total:</strong></td>
+                                    <td id="total-sum">0.00</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <br/>
+                        <button type="submit" class="btn btn-success">Submit RFQ</button>
+                        <br/>
+                    </form>
+                </div>
+            </t>
+            <script src="/procurement_management/static/src/js/rfq_form.js">RFQ Form</script>
+        </template>
 
         <template id="rfq_submit_view_template" name="RFQ submission form">
             <t t-call="portal.portal_layout">
