@@ -309,7 +309,7 @@
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label fw-semibold" for="contact_person_address">Authorized Person’s Address</label>
-                                                <input type="text" class="form-control shadow-sm" id="authhorized_person_address" name="authhorized_person_address" placeholder="Enter contact person's address"/>
+                                                <input type="text" class="form-control shadow-sm" id="authorized_person_address" name="authorized_person_address" placeholder="Enter contact person's address"/>
                                             </div>
                                         </div>
                                     </div>
@@ -540,11 +540,7 @@
                                 <button type="button" class="btn btn-secondary" id="prev-5">Previous</button>
                                 <button type="submit" class="btn btn-primary" id="submit-form" disabled="1">Submit</button>
                             </div>
-                            <!-- Navigation buttons -->
-                            <!-- <div class="d-flex justify-content-between mt-4">
-                                <button type="button" class="btn btn-outline-secondary px-4 py-2 rounded-3" id="prev-5">Previous</button>
-                                <button type="submit" class="btn btn-success px-4 py-2 rounded-3 shadow-sm" id="submit-form">Submit</button>
-                            </div> -->
+                            
                         </div>
 
                     </form>

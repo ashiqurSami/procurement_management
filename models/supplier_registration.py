@@ -42,7 +42,7 @@ class SupplierRegistration(models.TransientModel):
     authorized_person_name = fields.Char(string='Authorized Person Name')
     authorized_person_email = fields.Char(string='Authorized Person Email')
     authorized_person_phone = fields.Char(string='Authorized Person Phone')
-    authhorized_person_address = fields.Char(string='Authorized Person Address')
+    authorized_person_address = fields.Char(string='Authorized Person Address')
 
     #bank_details
     bank_name = fields.Char(string='Bank Name')
@@ -121,7 +121,7 @@ class SupplierRegistration(models.TransientModel):
             'name': self.company_name or 'N/A',
             'email': self.email or 'N/A',
             'phone': self.phone or 'N/A',
-            'image_1920':self.company_logo.decode('utf-8'),
+            'image_1920':self.company_logo,
             'street': self.company_address or 'N/A',
             'company_type_category': self.company_type_category or 'N/A',
             'trade_license_number': self.trade_license_number or 'N/A',

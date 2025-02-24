@@ -66,8 +66,9 @@
                     <group>
                         <field name="name" readonly="status in ('submitted', 'recommended', 'accepted')" invisible="1"/>
                         <field name="required_date" readonly="status in ('submitted', 'recommended', 'accepted')"/>
-                        <field name="approved_supplier" readonly="status in ('submitted', 'recommended', 'accepted')"/>
-                        <field name="total_amount" />
+                        <!-- <field name="approved_supplier" readonly="status in ('submitted', 'recommended', 'accepted')"/> -->
+                        <field name="approved_supplier" readonly="1"/>
+                        <field name="total_amount" readonly="1"/>
                     </group>
 
                     <!--                    product_lines-->
@@ -98,6 +99,7 @@
                                     <field name="score" readonly="rfp_status!='closed'"/>
                                     <field name="warranty_period" readonly="1"/>
                                     <field name="recommended" widget="boolean_toggle" class="text-right" readonly="rfp_status!='closed'"/>
+                                    <field name="state" readonly="1"/>
                                 </tree>
                                 <form>
                                     <header>
@@ -155,11 +157,10 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="rfp_id_seq"/>
-                <field name="name"/>
+                <!-- <field name="approved_supplier"/> -->
                 <field name="status" widget="badge" decoration-danger="status == 'rejected' or status == 'blacklisted' or status == 'closed' "
-                       decoration-success="status == 'approved'"
+                       decoration-success="status == 'approved' or status == 'accepted'"
                        decoration-warning="status == 'draft' or status == 'submitted' or status == 'recommended'"/>
-
                 <field name="required_date"/>
                 <!--                <field name="total_amount"/>-->
             </tree>
