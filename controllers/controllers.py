@@ -72,6 +72,7 @@ class ProcurementManagement(http.Controller):
 
         mail_id = request.env['mail.mail'].sudo().create(mail_values)
         mail_id.sudo().send()
+        print(otp_code)
         success_list.append('OTP has been sent to your email.')
 
         page_name='otp'
@@ -101,9 +102,11 @@ class ProcurementManagement(http.Controller):
 
         if user:
             user.write({'is_verified': True})
+            request.session['verified_email'] = email
             success_list.append('OTP verified. Proceeding to registration.')
             return request.render('procurement_management.supplier_registration_form_view_template', {
-                'success_list': success_list
+                'success_list': success_list,
+                'page_name': 'supplier_registration'
             })
 
         error_list.append('Invalid OTP. Please try again.')
@@ -112,17 +115,19 @@ class ProcurementManagement(http.Controller):
 
     @http.route('/procurement_management/register', auth='public', methods=['POST','GET'], website=True)
     def register_supplier(self, **kw):
+        if not request.session.get('verified_email'):
+            return request.redirect('/procurement_management/sign-up')
         error_list = []
         success_list = []
         if request.httprequest.method == 'POST':
             vals = {}
             keys = [
-                'company_name', 'email', 'phone', 'company_registered_address', 'company_alternate_address',
+                'company_name', 'email', 'phone','company_logo','company_address','company_registered_address', 'company_alternate_address',
                 'company_type_category', 'company_type', 'trade_license_number',
                 'tax_identification_number', 'commencement_date', 'expiry_date',
-                'contact_person_title', 'contact_email', 'contact_phone',
-                'finance_contact_title', 'finance_contact_email', 'finance_contact_phone',
-                'authorized_person_name', 'authorized_person_email', 'authorized_person_phone',
+                'contact_person_title', 'contact_email', 'contact_phone','contact_address',
+                'finance_contact_title', 'finance_contact_email', 'finance_contact_phone','finance_contact_address',
+                'authorized_person_name', 'authorized_person_email', 'authorized_person_phone','authhorized_person_address',
                 'bank_name', 'bank_address', 'bank_swift_code', 'account_name',
                 'account_number', 'iban', 'company_address_as_per_bank', 
                 'client_1_name','client_1_address', 'client_1_contact_email','client_1_contact_phone', 
@@ -153,20 +158,43 @@ class ProcurementManagement(http.Controller):
                 error_list.append("Trade License Number Should Be Of 8-13 Digits And All Alphanumeric Digits")
             if kw.get('expiry_date') and fields.Date.to_date(kw.get('expiry_date')) <= fields.date.today():
                 error_list.append("Expiry Date Should Be Greater Than Today")
+            if kw.get('commencement_date') and fields.Date.to_date(kw.get('commencement_date')) >= fields.date.today():
+                error_list.append("Commencement Date Should Be Less Than Today")
+            if kw.get('certificate_expiry_date') and fields.Date.to_date(kw.get('certificate_expiry_date')) <= fields.date.today():
+                error_list.append("Certificate is already expired. It's not allowed!")
+
             required_fields = {
                 "company_name": "Company Name is mandatory",
                 "email": "Company Email is mandatory",
+                "phone": "Company Phone is mandatory",
+                "company_type_category":"Company type category is mandatory",
+                "company_address":"Company Address is mandatory",
                 "bank_name": "Bank Name is mandatory",
                 "bank_address": "Bank Address is mandatory",
                 "account_number": "Account Number is mandatory",
+                "contact_person_title": "Primary contact name is mandatory",
+                "contact_email": "Primary contact email is mandatory",
+                "contact_phone": "Primary contact phone is mandatory",
+                "contact_address": "Primary contact address is mandatory",
+                "finance_contact_title": "Finance contact name is mandatory",
+                "finance_contact_email": "Finance contact email is mandatory",
+                "finance_contact_phone": "Finance contact phone is mandatory",
+                "finance_contact_address": "Finance contact address is mandatory",
+                "authorized_person_name": "Authorized person name is mandatory",
+                "authorized_person_email": "Authorized person email is mandatory",
+                "authorized_person_phone": "Authorized person phone is mandatory",
+                "authhorized_person_address": "Authorized person address is mandatory",
             }
             error_list.extend(message for field,message in required_fields.items() if not kw.get(field))
+            if 'company_logo' in kw and not kw['company_logo']:
+                error_list.append("Company Logo is required.")
+
             if kw.get('email'):
                 already_exists = request.env['res.partner'].sudo().search([('email', '=', kw.get('email'))])
                 if already_exists:
                     error_list.append("Company Email Already Exists In the system. Try with another email")
             file_fields = [
-                'trade_license_business_registration', 'certificate_of_incorporation', 'certificate_of_good_standing',
+                'company_logo','trade_license_business_registration', 'certificate_of_incorporation', 'certificate_of_good_standing',
                 'establishment_card', 'vat_tax_certificate', 'memorandum_of_association',
                 'identification_document_for_authorized_person', 'bank_letter_indicating_bank_account',
                 'past_2_years_audited_financial_statements', 'other_certifications'

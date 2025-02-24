@@ -24,7 +24,6 @@ class PurchaseOrder(models.Model):
         })
 
         self.write({'state': 'purchase','date_approve':fields.Datetime.now()})
-        # print("\n \n","self.rfp_id.rfq_line_ids",self.rfp_id.rfq_line_ids,"\n \n")
         cancelled_rfqs=self.env['purchase.order'].search([('rfp_id','=',self.rfp_id.id),('state','!=','purchase')])
         for rfq in cancelled_rfqs:
             rfq.write({'state':'cancel'})
@@ -36,7 +35,12 @@ class PurchaseOrder(models.Model):
             'res_id':self.rfp_id.id,
             'target':'current',
         }
-            
+    @api.constrains('score')
+    def _check_score(self):
+        for order in self:
+            if order.score < 0 or order.score > 10:
+                raise ValidationError(_('Score must be between 0 and 10'))
+
     @api.constrains('recommended', 'partner_id', 'rfp_id')
     def _check_unique_recommended_per_supplier(self):
         """Ensure only one RFQ per supplier can be recommended within the same RFP."""

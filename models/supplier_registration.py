@@ -13,6 +13,7 @@ class SupplierRegistration(models.TransientModel):
     email = fields.Char(string='Company Email')
     phone = fields.Char(string='Company Phone')
     company_address = fields.Char(string='Company Registered Address')
+    company_logo=fields.Binary(string="Company Logo")
     company_type_category = fields.Selection([
         ('LLC', 'LLC'),
         ('corporate', 'Corporation'),
@@ -120,6 +121,7 @@ class SupplierRegistration(models.TransientModel):
             'name': self.company_name or 'N/A',
             'email': self.email or 'N/A',
             'phone': self.phone or 'N/A',
+            'image_1920':self.company_logo.decode('utf-8'),
             'street': self.company_address or 'N/A',
             'company_type_category': self.company_type_category or 'N/A',
             'trade_license_number': self.trade_license_number or 'N/A',
