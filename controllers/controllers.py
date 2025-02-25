@@ -140,7 +140,8 @@ class ProcurementManagement(http.Controller):
                 'client_3_name', 'client_3_address', 'client_3_contact_email', 'client_3_contact_phone',
                 'client_4_name', 'client_4_address', 'client_4_contact_email', 'client_4_contact_phone',
                 'client_5_name', 'client_5_address', 'client_5_contact_email', 'client_5_contact_phone',
-                'certification', 'certificate_number', 'certifying_body', 'award_date', 'certificate_expiry_date'
+                'certification', 'certificate_number', 'certifying_body', 'award_date', 'certificate_expiry_date',
+                'signatory_name','authorized_signatory','company_stamp_and_date'
             ]
             for key in text_keys:
                 if kw.get(key):
@@ -201,6 +202,9 @@ class ProcurementManagement(http.Controller):
                 "authorized_person_email": "Authorized person email is mandatory",
                 "authorized_person_phone": "Authorized person phone is mandatory",
                 "authorized_person_address": "Authorized person address is mandatory",
+                "signatory_name":"Signatory name is mandatory",
+                "authorized_signatory":"Authorized signatory name is mandatory",
+                "company_stamp_and_date":"Company stamp and date is mandatory"
             }
             error_list.extend(message for field, message in required_fields.items() if not kw.get(field))
             

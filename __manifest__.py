@@ -19,7 +19,8 @@ Long description of module's purpose
 
     # Always loaded
     'data': [
-        'security/record_rules.xml',
+
+        'security/security.xml',
         'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
@@ -36,6 +37,9 @@ Long description of module's purpose
         'views/purchase_order_inherit_views.xml',
         'wizard/rfp_report_wizard.xml',
         'views/procurement_management_menus.xml',
+        'demo/supplier_registration_demo.xml',
+        'demo/procurement_management.rfp.csv',
+        'demo/rfp_product_line_demo.xml'
     ],
 
     # Only loaded in demonstration mode

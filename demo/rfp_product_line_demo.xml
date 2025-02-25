@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="rfp_product_line_1" model="procurement_management.rfp.product.line">
+            <field name="rfp_id" ref="rfp_demo_1"/>
+            <field name="product_id" ref="product.product_product_5"/>
+            <field name="description">Office Chair - Ergonomic</field>
+            <field name="quantity">5</field>
+            <field name="unit_price">150.00</field>
+            <field name="delivery_charges">20.00</field>
+        </record>
+
+        <record id="rfp_product_line_2" model="procurement_management.rfp.product.line">
+            <field name="rfp_id" ref="rfp_demo_1"/>
+            <field name="product_id" ref="product.product_product_6"/>
+            <field name="description">Desk Lamp - LED</field>
+            <field name="quantity">3</field>
+            <field name="unit_price">25.00</field>
+            <field name="delivery_charges">10.00</field>
+        </record>
+
+        <record id="rfp_product_line_3" model="procurement_management.rfp.product.line">
+            <field name="rfp_id" ref="rfp_demo_2"/>
+            <field name="product_id" ref="product.product_product_7"/>
+            <field name="description">Laptop - 16GB RAM</field>
+            <field name="quantity">2</field>
+            <field name="unit_price">1200.00</field>
+            <field name="delivery_charges">50.00</field>
+        </record>
+
+        <record id="rfp_product_line_4" model="procurement_management.rfp.product.line">
+            <field name="rfp_id" ref="rfp_demo_2"/>
+            <field name="product_id" ref="product.product_product_8"/>
+            <field name="description">Wireless Mouse</field>
+            <field name="quantity">4</field>
+            <field name="unit_price">15.00</field>
+            <field name="delivery_charges">5.00</field>
+        </record>
+
+        <record id="rfp_product_line_5" model="procurement_management.rfp.product.line">
+            <field name="rfp_id" ref="rfp_demo_3"/>
+            <field name="product_id" ref="product.product_product_9"/>
+            <field name="description">Monitor - 24 inch</field>
+            <field name="quantity">3</field>
+            <field name="unit_price">200.00</field>
+            <field name="delivery_charges">15.00</field>
+        </record>
+
+        <record id="rfp_product_line_6" model="procurement_management.rfp.product.line">
+            <field name="rfp_id" ref="rfp_demo_4"/>
+            <field name="product_id" ref="product.product_product_10"/>
+            <field name="description">Keyboard - Mechanical</field>
+            <field name="quantity">5</field>
+            <field name="unit_price">80.00</field>
+            <field name="delivery_charges">10.00</field>
+        </record>
+
+        <record id="rfp_product_line_7" model="procurement_management.rfp.product.line">
+            <field name="rfp_id" ref="rfp_demo_4"/>
+            <field name="product_id" ref="product.product_product_12"/>
+            <field name="description">USB Hub - 4 ports</field>
+            <field name="quantity">2</field>
+            <field name="unit_price">10.00</field>
+            <field name="delivery_charges">5.00</field>
+        </record>
+
+        <record id="rfp_product_line_8" model="procurement_management.rfp.product.line">
+            <field name="rfp_id" ref="rfp_demo_5"/>
+            <field name="product_id" ref="product.product_product_13"/>
+            <field name="description">Printer - Laser</field>
+            <field name="quantity">1</field>
+            <field name="unit_price">300.00</field>
+            <field name="delivery_charges">25.00</field>
+        </record>
+
+        <record id="rfp_product_line_9" model="procurement_management.rfp.product.line">
+            <field name="rfp_id" ref="rfp_demo_6"/>
+            <field name="product_id" ref="product.product_product_20"/>
+            <field name="description">Projector - 1080p</field>
+            <field name="quantity">1</field>
+            <field name="unit_price">500.00</field>
+            <field name="delivery_charges">30.00</field>
+        </record>
+
+        <record id="rfp_product_line_10" model="procurement_management.rfp.product.line">
+            <field name="rfp_id" ref="rfp_demo_6"/>
+            <field name="product_id" ref="product.product_product_22"/>
+            <field name="description">Screen - Portable</field>
+            <field name="quantity">2</field>
+            <field name="unit_price">150.00</field>
+            <field name="delivery_charges">20.00</field>
+        </record>
+
+        <record id="rfp_product_line_11" model="procurement_management.rfp.product.line">
+            <field name="rfp_id" ref="rfp_demo_7"/>
+            <field name="product_id" ref="product.product_product_24"/>
+            <field name="description">Headset - Noise Cancelling</field>
+            <field name="quantity">4</field>
+            <field name="unit_price">100.00</field>
+            <field name="delivery_charges">15.00</field>
+        </record>
+
+        <record id="rfp_product_line_12" model="procurement_management.rfp.product.line">
+            <field name="rfp_id" ref="rfp_demo_8"/>
+            <field name="product_id" ref="product.product_product_25"/>
+            <field name="description">Webcam - HD</field>
+            <field name="quantity">3</field>
+            <field name="unit_price">60.00</field>
+            <field name="delivery_charges">10.00</field>
+        </record>
+
+        <record id="rfp_product_line_13" model="procurement_management.rfp.product.line">
+            <field name="rfp_id" ref="rfp_demo_8"/>
+            <field name="product_id" ref="product.product_product_27"/>
+            <field name="description">Speaker - Bluetooth</field>
+            <field name="quantity">2</field>
+            <field name="unit_price">50.00</field>
+            <field name="delivery_charges">10.00</field>
+        </record>
+
+        <record id="rfp_product_line_14" model="procurement_management.rfp.product.line">
+            <field name="rfp_id" ref="rfp_demo_9"/>
+            <field name="product_id" ref="product.consu_delivery_03"/>
+            <field name="description">Paper - A4 (Ream)</field>
+            <field name="quantity">10</field>
+            <field name="unit_price">5.00</field>
+            <field name="delivery_charges">5.00</field>
+        </record>
+
+        <record id="rfp_product_line_15" model="procurement_management.rfp.product.line">
+            <field name="rfp_id" ref="rfp_demo_10"/>
+            <field name="product_id" ref="product.consu_delivery_02"/>
+            <field name="description">Ink Cartridge - Black</field>
+            <field name="quantity">5</field>
+            <field name="unit_price">30.00</field>
+            <field name="delivery_charges">5.00</field>
+        </record>
+
+        <record id="rfp_product_line_16" model="procurement_management.rfp.product.line">
+            <field name="rfp_id" ref="rfp_demo_10"/>
+            <field name="product_id" ref="product.consu_delivery_01"/>
+            <field name="description">Toner - Color</field>
+            <field name="quantity">3</field>
+            <field name="unit_price">75.00</field>
+            <field name="delivery_charges">10.00</field>
+        </record>
+    </data>
+</odoo>

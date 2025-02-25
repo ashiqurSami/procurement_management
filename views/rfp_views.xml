@@ -53,22 +53,22 @@
                             invisible="status !='approved'"
                             groups="procurement_management.group_procurement_management_approver"
                     />
-
-
                     <field name="status" widget="statusbar"/>
                 </header>
                 <sheet>
-                    <widget name="web_ribbon" title="Accepted" bg_color="text-bg-success" invisible="status != 'accepted'"/>
-                    <widget name="web_ribbon" title="Rejected" bg_color="text-bg-danger" invisible="status != 'rejected'"/>
-                    <!--                    <div class="oe_title">-->
-                    <!--                        <field name="rfp_id_seq" string="RFP ID"/>-->
-                    <!--                    </div>-->
                     <group>
-                        <field name="name" readonly="status in ('submitted', 'recommended', 'accepted')" invisible="1"/>
-                        <field name="required_date" readonly="status in ('submitted', 'recommended', 'accepted')"/>
-                        <!-- <field name="approved_supplier" readonly="status in ('submitted', 'recommended', 'accepted')"/> -->
-                        <field name="approved_supplier" readonly="1"/>
-                        <field name="total_amount" readonly="1"/>
+                        <widget name="web_ribbon" title="Accepted" bg_color="text-bg-success" invisible="status != 'accepted'"/>
+                        <widget name="web_ribbon" title="Rejected" bg_color="text-bg-danger" invisible="status != 'rejected'"/>
+                        <group>
+                            <field name="name" readonly="status in ('submitted', 'recommended', 'accepted')" invisible="1"/>
+                            <field name="required_date" readonly="status in ('submitted', 'recommended', 'accepted')"/>
+                            <field name="approved_supplier" readonly="1"/>
+                            <field name="total_amount" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="create_uid" readonly="1"/>
+                            <field name="write_uid" readonly="1" string="Approved By"/>
+                        </group>
                     </group>
 
                     <!--                    product_lines-->
@@ -77,7 +77,7 @@
                             <field name="product_line_ids"
                                    readonly="status != 'draft'"
                                    create="status == 'draft'">
-                            
+
                                 <tree editable="bottom">
                                     <field name="product_id" />
                                     <field name="description"/>
@@ -93,13 +93,13 @@
                                    delete="status =='draft'">
 
                                 <tree>
-                                    <field name="rfp_status" invisible="1" />
+                                    <field name="rfp_status" column_invisible="1" />
                                     <field name="partner_id" readonly="1"/>
                                     <field name="expected_delivery_date" readonly="1"/>
                                     <field name="score" readonly="rfp_status!='closed'"/>
                                     <field name="warranty_period" readonly="1"/>
                                     <field name="recommended" widget="boolean_toggle" class="text-right" readonly="rfp_status!='closed'"/>
-                                    <field name="state" readonly="1"/>
+                                    <field name="state" readonly="1" widget="badge" decoration-success="state == 'purchase'" decoration-danger="state == 'cancel'"/>
                                 </tree>
                                 <form>
                                     <header>
@@ -129,6 +129,7 @@
                                         <page string="RFQ Line Products">
                                             <field name="order_line">
                                                 <tree>
+                                                    <field name="currency_id" column_invisible="1"/>
                                                     <field name="product_id"/>
                                                     <field name="date_approve"/>
                                                     <field name="product_uom_qty"/>
@@ -167,42 +168,42 @@
         </field>
     </record>
 
-<record id="view_rfp_search" model="ir.ui.view">
-    <field name="name">procurement.management.rfp.search</field>
-    <field name="model">procurement_management.rfp</field>
-    <field name="arch" type="xml">
-        <search string="RFP Search">
-            <!-- Search Fields -->
-            <field name="rfp_id_seq" string="RFP Reference"/>
-            <field name="name" string="RFP Name"/>
+    <record id="view_rfp_search" model="ir.ui.view">
+        <field name="name">procurement.management.rfp.search</field>
+        <field name="model">procurement_management.rfp</field>
+        <field name="arch" type="xml">
+            <search string="RFP Search">
+                <!-- Search Fields -->
+                <field name="rfp_id_seq" string="RFP Reference"/>
+                <field name="name" string="RFP Name"/>
 
-            <!-- Filters -->
-            <filter string="Draft" name="filter_draft" domain="[('status', '=', 'draft')]"/>
-            <filter string="Submitted" name="filter_submitted" domain="[('status', '=', 'submitted')]"/>
-            <filter string="Approved" name="filter_approved" domain="[('status', '=', 'approved')]"/>
-            <filter string="Required Date" name="required_date" date="required_date"/>
+                <!-- Filters -->
+                <filter string="Draft" name="filter_draft" domain="[('status', '=', 'draft')]"/>
+                <filter string="Submitted" name="filter_submitted" domain="[('status', '=', 'submitted')]"/>
+                <filter string="Approved" name="filter_approved" domain="[('status', '=', 'approved')]"/>
+                <filter string="Required Date" name="required_date" date="required_date"/>
 
-            <!-- Group By Options -->
-            <group expand="1" string="Group By">
-                <filter string="Status" name="group_by_status" context="{'group_by': 'status'}"/>
-                <filter string="Approved Supplier" name="group_by_supplier" context="{'group_by': 'approved_supplier'}"/>
-                <filter string="Required Date" name="group_by_required_date" context="{'group_by': 'required_date'}"/>
-            </group>
+                <!-- Group By Options -->
+                <group expand="1" string="Group By">
+                    <filter string="Status" name="group_by_status" context="{'group_by': 'status'}"/>
+                    <filter string="Approved Supplier" name="group_by_supplier" context="{'group_by': 'approved_supplier'}"/>
+                    <filter string="Required Date" name="group_by_required_date" context="{'group_by': 'required_date'}"/>
+                </group>
 
-            <!-- Search Panel -->
-            <searchpanel>
-                <field name="status" string="Status" icon="fa-filter"/>
-                <field name="approved_supplier" string="Approved Supplier" icon="fa-user"/>
-            </searchpanel>
-        </search>
-    </field>
-</record>
+                <!-- Search Panel -->
+                <searchpanel>
+                    <field name="status" string="Status" icon="fa-filter"/>
+                    <field name="approved_supplier" string="Approved Supplier" icon="fa-user"/>
+                </searchpanel>
+            </search>
+        </field>
+    </record>
 
 
-<record id="view_rfp_graph" model="ir.ui.view">
-		<field name="name">procurement_management.rfp.graph</field>
-		<field name="model">procurement_management.rfp</field>
-		<field name="arch" type="xml">
+    <record id="view_rfp_graph" model="ir.ui.view">
+        <field name="name">procurement_management.rfp.graph</field>
+        <field name="model">procurement_management.rfp</field>
+        <field name="arch" type="xml">
             <graph string="RFP View Graph" type="line" disable_linking="True" stacked="0">
                 <field name="required_date" type="row" interval="month"/>
                 <field name="total_amount" type="col"/>
@@ -210,25 +211,25 @@
                 <field name="approved_supplier" string="Supplier" type="group"/>
                 <field name="status" string="Status" type="group"/>
             </graph>
-		</field>
-	</record>
+        </field>
+    </record>
 
 
-<record id="view_rfp_pivot" model="ir.ui.view">
-		<field name="name">procurement_management.rfp.pivot</field>
-		<field name="model">procurement_management.rfp</field>
-		<field name="arch" type="xml">
-		    <pivot string="RFP View Pivot" disable_linking="0" display_quantity="1">
+    <record id="view_rfp_pivot" model="ir.ui.view">
+        <field name="name">procurement_management.rfp.pivot</field>
+        <field name="model">procurement_management.rfp</field>
+        <field name="arch" type="xml">
+            <pivot string="RFP View Pivot" disable_linking="0" display_quantity="1">
                 <field name="approved_supplier" string="Supplier" type="row"/>
                 <field name="required_date" type="col" interval="month"/>
                 <field name="status" type="subgroup"/>
                 <field name="total_amount" type="measure"/>
-		    </pivot>
-		</field>
-	</record>
+            </pivot>
+        </field>
+    </record>
 
 
-<record id="action_procurement_management_rfp" model="ir.actions.act_window">
+    <record id="action_procurement_management_rfp" model="ir.actions.act_window">
         <field name="name">RFP</field>
         <field name="res_model">procurement_management.rfp</field>
         <field name="view_mode">tree,form,graph,pivot</field>

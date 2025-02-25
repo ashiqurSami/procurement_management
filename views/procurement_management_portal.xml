@@ -5,25 +5,6 @@
             <xpath expr="//div[@id='portal_client_category']" position="inside">
                 <t t-call="portal.portal_docs_entry">
                     <t t-set="icon" t-value="'/sale/static/src/img/bag.svg'"/>
-                    <t t-set="title">Supplier</t>
-                    <t t-set="text">Supplier Dashboard</t>
-                    <t t-set="url" t-value="'/procurement_management/sign-up'"/>
-                    <t t-set="config_card" t-value="True"/>
-                </t>
-            </xpath>
-
-            <xpath expr="//div[@id='portal_client_category']" position="inside">
-                <t t-call="portal.portal_docs_entry">
-                    <t t-set="icon" t-value="'/sale/static/src/img/bag.svg'"/>
-                    <t t-set="title">Supplier Registration</t>
-                    <t t-set="text">Registration Form</t>
-                    <t t-set="url" t-value="'/procurement_management/register'"/>
-                    <t t-set="config_card" t-value="True"/>
-                </t>
-            </xpath>
-            <xpath expr="//div[@id='portal_client_category']" position="inside">
-                <t t-call="portal.portal_docs_entry">
-                    <t t-set="icon" t-value="'/sale/static/src/img/bag.svg'"/>
                     <t t-set="title">Submit Quotations</t>
                     <t t-set="text">RFQ</t>
                     <t t-set="url" t-value="'/procurement_management/rfps'"/>
@@ -105,8 +86,6 @@
                     <div class="card shadow-lg p-4 rounded-lg"
                          style="max-width: 400px; width: 100%; border-radius: 12px;">
                         <div class="text-center mb-4">
-                            <img src="/your_module/static/img/logo.png" alt="Company Logo"
-                                 style="max-width: 100px;"/>
                             <h3 class="mt-3" style="font-weight: 600; color: #333;">Sign Up</h3>
                             <p style="color: #777;">Enter your email to receive an OTP</p>
                         </div>
@@ -222,6 +201,10 @@
                                                 <label class="form-label fw-semibold" for="company_address">Company Address</label>
                                                 <input type="text" class="form-control shadow-sm" id="company_address" name="company_address" placeholder="Enter registered address"/>
                                             </div>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold" for="commencement_date">Commencement Date</label>
+                                                <input type="date" class="form-control shadow-sm" id="commencement_date" name="commencement_date"/>
+                                            </div>
                                         </div>
 
                                         <div class="col-md-6">
@@ -242,10 +225,6 @@
                                                 <input type="file" class="form-control shadow-sm" id="company_logo" name="company_logo" accept="image/*"/>
                                             </div>
                                             <div class="mb-3">
-                                                <label class="form-label fw-semibold" for="commencement_date">Commencement Date</label>
-                                                <input type="date" class="form-control shadow-sm" id="commencement_date" name="commencement_date"/>
-                                            </div>
-                                            <div class="mb-3">
                                                 <label class="form-label fw-semibold" for="expiry_date">Expiry Date</label>
                                                 <input type="date" class="form-control shadow-sm" id="expiry_date" name="expiry_date"/>
                                             </div>
@@ -255,6 +234,7 @@
                                     <h4 class="mt-4 text-primary fw-semibold border-bottom pb-2">Contact Person Information</h4>
                                     <div class="row g-4">
                                         <div class="col-md-4">
+                                             <h4 class="text-primary fw-semibold border-bottom pb-2">Primary Contact</h4>
                                             <div class="mb-3">
                                                 <label class="form-label fw-semibold" for="contact_person_title">Contact Person’s Title</label>
                                                 <input type="text" class="form-control shadow-sm" id="contact_person_title" name="contact_person_title" placeholder="Enter contact person's title"/>
@@ -450,43 +430,43 @@
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label for="trade_license_business_registration" class="form-label fw-semibold">Trade License / Business Registration</label>
-                                        <input type="file" class="form-control shadow-sm" id="trade_license_business_registration" name="trade_license_business_registration"/>
+                                        <input type="file" class="form-control shadow-sm" id="trade_license_business_registration" name="trade_license_business_registration" accept=".pdf,.docx,.jpg,.jpeg,.png"/>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="certificate_of_incorporation" class="form-label fw-semibold">Certificate of Incorporation</label>
-                                        <input type="file" class="form-control shadow-sm" id="certificate_of_incorporation" name="certificate_of_incorporation"/>
+                                        <input type="file" class="form-control shadow-sm" id="certificate_of_incorporation" name="certificate_of_incorporation" accept=".pdf,.docx,.jpg,.jpeg,.png"/>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="certificate_of_good_standing" class="form-label fw-semibold">Certificate of Good Standing</label>
-                                        <input type="file" class="form-control shadow-sm" id="certificate_of_good_standing" name="certificate_of_good_standing"/>
+                                        <input type="file" class="form-control shadow-sm" id="certificate_of_good_standing" name="certificate_of_good_standing" accept=".pdf,.docx,.jpg,.jpeg,.png"/>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="establishment_card" class="form-label fw-semibold">Establishment Card</label>
-                                        <input type="file" class="form-control shadow-sm" id="establishment_card" name="establishment_card"/>
+                                        <input type="file" class="form-control shadow-sm" id="establishment_card" name="establishment_card" accept=".pdf,.docx,.jpg,.jpeg,.png"/>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="vat_tax_certificate" class="form-label fw-semibold">VAT / Tax Certificate</label>
-                                        <input type="file" class="form-control shadow-sm" id="vat_tax_certificate" name="vat_tax_certificate"/>
+                                        <input type="file" class="form-control shadow-sm" id="vat_tax_certificate" name="vat_tax_certificate" accept=".pdf,.docx,.jpg,.jpeg,.png"/>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="memorandum_of_association" class="form-label fw-semibold">Memorandum of Association / Power of Attorney / Legal Instrument</label>
-                                        <input type="file" class="form-control shadow-sm" id="memorandum_of_association" name="memorandum_of_association"/>
+                                        <input type="file" class="form-control shadow-sm" id="memorandum_of_association" name="memorandum_of_association" accept=".pdf,.docx,.jpg,.jpeg,.png"/>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="identification_document_for_authorized_person" class="form-label fw-semibold">Identification Document for Authorized Person</label>
-                                        <input type="file" class="form-control shadow-sm" id="identification_document_for_authorized_person" name="identification_document_for_authorized_person"/>
+                                        <input type="file" class="form-control shadow-sm" id="identification_document_for_authorized_person" name="identification_document_for_authorized_person" accept=".pdf,.docx,.jpg,.jpeg,.png"/>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="bank_letter_indicating_bank_account" class="form-label fw-semibold">Bank Letter indicating Bank Account Information</label>
-                                        <input type="file" class="form-control shadow-sm" id="bank_letter_indicating_bank_account" name="bank_letter_indicating_bank_account"/>
+                                        <input type="file" class="form-control shadow-sm" id="bank_letter_indicating_bank_account" name="bank_letter_indicating_bank_account" accept=".pdf,.docx,.jpg,.jpeg,.png"/>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="past_2_years_audited_financial_statements" class="form-label fw-semibold">Past 2 years Audited Financial Statements</label>
-                                        <input type="file" class="form-control shadow-sm" id="past_2_years_audited_financial_statements" name="past_2_years_audited_financial_statements"/>
+                                        <input type="file" class="form-control shadow-sm" id="past_2_years_audited_financial_statements" name="past_2_years_audited_financial_statements" accept=".pdf,.docx,.jpg,.jpeg,.png"/>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="other_certifications" class="form-label fw-semibold">Other Certification / Accreditations</label>
-                                        <input type="file" class="form-control shadow-sm" id="other_certifications" name="other_certifications"/>
+                                        <input type="file" class="form-control shadow-sm" id="other_certifications" name="other_certifications" accept=".pdf,.docx,.jpg,.jpeg,.png"/>
                                     </div>
                                 </div>
                             </div>
@@ -515,13 +495,13 @@
                                     <!-- Name of Signatory (Mandatory) -->
                                     <div class="col-md-6">
                                         <label for="signatory_name" class="form-label fw-semibold">Name of Signatory <span class="text-danger">*</span></label>
-                                        <input type="file" class="form-control shadow-sm" id="signatory_name" name="signatory_name" accept="image/*" />
+                                        <input type="text" class="form-control shadow-sm" id="signatory_name" name="signatory_name" accept="image/*" />
                                     </div>
 
                                     <!-- Authorized Signatory (Mandatory) -->
                                     <div class="col-md-6">
                                         <label for="authorized_signatory" class="form-label fw-semibold">Authorized Signatory <span class="text-danger">*</span></label>
-                                        <input type="file" class="form-control shadow-sm" id="authorized_signatory" name="authorized_signatory" accept="image/*" />
+                                        <input type="text" class="form-control shadow-sm" id="authorized_signatory" name="authorized_signatory" accept="image/*" />
                                     </div>
 
                                     <!-- Company Stamp & Date (Mandatory) -->
@@ -540,7 +520,7 @@
                                 <button type="button" class="btn btn-secondary" id="prev-5">Previous</button>
                                 <button type="submit" class="btn btn-primary" id="submit-form" disabled="1">Submit</button>
                             </div>
-                            
+
                         </div>
 
                     </form>

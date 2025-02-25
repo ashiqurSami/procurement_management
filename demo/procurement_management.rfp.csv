@@ -1,0 +1,11 @@
+id,rfp_id_seq,status,required_date,create_uid:id
+rfp_demo_1,RFPID001,draft,2023-12-31,base.user_demo
+rfp_demo_2,RFPID002,draft,2023-11-15,base.user_demo
+rfp_demo_3,RFPID003,draft,2023-10-30,base.user_demo
+rfp_demo_4,RFPID004,draft,2023-09-20,base.user_demo
+rfp_demo_5,RFPID005,draft,2023-08-10,base.user_demo
+rfp_demo_6,RFPID006,draft,2023-07-05,base.user_demo
+rfp_demo_7,RFPID007,draft,2023-06-01,base.user_demo
+rfp_demo_8,RFPID008,draft,2023-05-15,base.user_demo
+rfp_demo_9,RFPID009,draft,2023-04-10,base.user_demo
+rfp_demo_10,RFPID010,draft,2023-03-01,base.user_demo
