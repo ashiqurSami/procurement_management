@@ -73,7 +73,6 @@ class ProcurementManagement(http.Controller):
 
         mail_id = request.env['mail.mail'].sudo().create(mail_values)
         mail_id.sudo().send()
-        print(otp_code)
         success_list.append('OTP has been sent to your email.')
 
         page_name='otp'

@@ -15,12 +15,12 @@ Long description of module's purpose
     'version': '0.1',
 
     # Dependencies
-    'depends': ['base', 'portal', 'purchase', 'account', 'contacts', 'mail'],
+    'depends': ['portal', 'purchase', 'account', 'contacts'],
 
     # Always loaded
     'data': [
 
-        'security/security.xml',
+        'security/security.xml'
         'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
