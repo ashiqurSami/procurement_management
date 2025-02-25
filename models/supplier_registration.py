@@ -115,6 +115,9 @@ class SupplierRegistration(models.TransientModel):
         ('blacklisted','Blacklisted'),
         ('approved', 'Approved')],
         string='State', default='draft')
+    signatory_name=fields.Char(string="Signatory Name")
+    authorized_signatory=fields.Char(string="Authorized Signatory")
+    company_stamp_and_date=fields.Binary(string="Company stamp and Date")
 
     def action_approve(self):
         vals = {

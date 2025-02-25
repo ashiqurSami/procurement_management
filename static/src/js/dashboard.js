@@ -115,21 +115,32 @@ export class SupplierDashboard extends Component {
         });
 
         // Pie Chart
-        this.chartInstancePie = new Chart(ctxPie, {
-            type: "pie",
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: "Product Distribution",
-                    data: quantities,
-                    backgroundColor: ["#ff6384", "#36a2eb", "#ffce56", "#4bc0c0", "#9966ff"],
-                }],
+this.chartInstancePie = new Chart(ctxPie, {
+    type: "pie",
+    data: {
+        labels: labels,
+        datasets: [{
+            label: "Product Distribution",
+            data: quantities,
+            backgroundColor: ["#ff6384", "#36a2eb", "#ffce56", "#4bc0c0", "#9966ff", "#ff9f40"], // Pie chart colors
+            borderColor: "#ffffff",
+            borderWidth: 2,
+        }],
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'top',
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
+            tooltip: {
+                enabled: true,
             },
-        });
+        },
+    },
+});
+
 
         // Line Chart
         this.chartInstanceLine = new Chart(ctxLine, {
@@ -156,21 +167,31 @@ export class SupplierDashboard extends Component {
         });
 
         // Doughnut Chart
-        this.chartInstanceDoughnut = new Chart(ctxDoughnut, {
-            type: "doughnut",
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: "Amount Distribution",
-                    data: amounts,
-                    backgroundColor: ["#ff6384", "#36a2eb", "#ffce56", "#4bc0c0", "#9966ff"],
-                }],
+this.chartInstanceDoughnut = new Chart(ctxDoughnut, {
+    type: "doughnut",
+    data: {
+        labels: labels,
+        datasets: [{
+            label: "Amount Distribution",
+            data: amounts,
+            backgroundColor: ["#ff9f40", "#4bc0c0", "#9966ff", "#ff6384", "#36a2eb", "#ffce56"], // Doughnut chart colors (different from pie)
+            borderColor: "#ffffff",
+            borderWidth: 2,
+        }],
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'top',
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
+            tooltip: {
+                enabled: true,
             },
-        });
+        },
+    },
+});
     }
 
     onSupplierChange(ev) {
@@ -187,3 +208,6 @@ export class SupplierDashboard extends Component {
 }
 
 registry.category("actions").add("procurement_management.supplier_dashboard", SupplierDashboard);
+
+
+

@@ -10,12 +10,15 @@
                     <field name="supplier_id"/>
                     <field name="start_date"/>
                     <field name="end_date"/>
-                    <field name="html_preview" widget="html" string="Preview"/>
+
                 </group>
                 <div style="display: flex; gap: 10px;">
     <button name="action_generate_html_preview" string="Preview HTML" type="object" class="oe_highlight"/>
     <button name="action_generate_excel_report" string="Generate Excel Report" type="object" class="oe_highlight"/>
 </div>
+                <group>
+                    <field name="html_preview" widget="html" string="Preview"/>
+                </group>
 
             </form>
         </field>

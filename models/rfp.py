@@ -50,20 +50,6 @@ class RFP(models.Model):
         string='Product Lines'
     )
 
-    selected_product_ids = fields.Many2many(
-        'product.product',
-        string='Selected Products',
-        compute='_compute_selected_products',
-    )
-
-    @api.depends('product_line_ids.product_id')
-    def _compute_selected_products(self):
-        """
-        Compute the selected product IDs based on the product lines.
-        """
-        for rfp in self:
-            rfp.selected_product_ids = rfp.product_line_ids.mapped('product_id')
-
     rfq_line_ids = fields.One2many(
         'purchase.order',
         'rfp_id',
@@ -71,6 +57,8 @@ class RFP(models.Model):
         domain=lambda self: self._get_rfq_domain()
     )
     total_amount=fields.Monetary(string='Total Amount')
+    creator_id = fields.Many2one('res.users', string='Reviewed By')
+    approver_id = fields.Many2one('res.users', string='Approved By')
 
     @api.model
     def _get_rfq_domain(self):
