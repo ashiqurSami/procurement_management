@@ -93,8 +93,6 @@ class MyRFQPortal(CustomerPortal):
 
     @http.route(['/procurement_management/rfp/<int:rfp_id>/create_rfp'], type='http',auth='user', website=True)
     def create_rfq(self,rfp_id,**kw):
-        print(request.env.user.partner_id.id, request.env.user.id)
-        print(kw)
         rfp=request.env['procurement_management.rfp'].sudo().browse(rfp_id)
 
         return request.render('procurement_management.rfq_submit_view_template',{'rfp':rfp})

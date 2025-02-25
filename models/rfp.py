@@ -91,10 +91,8 @@ class RFP(models.Model):
             'created_by': self.create_uid.name,
             'email_to' : self.env.user.company_id.email
         }
-        print(self.create_uid.name,self.create_uid.id)
         # Send email to each approver
         for approver in approver_group_users:
-            print(approver.email)
             if approver.email:
                 template.with_context(**context).send_mail(approver.id)
 
