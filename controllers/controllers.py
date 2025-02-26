@@ -53,7 +53,7 @@ class ProcurementManagement(http.Controller):
                 error_list.append('This email is in already used. Please use another email.')
 
         if error_list:
-            return request.render('procurement_management.sign_up_template',{'error_list':error_list})
+            return request.render('procurement_management.sign_up_template',{'error_list':error_list,'page_name':'sign_up'})
 
         otp_code = random.randint(100000, 999999)
         expiry_time = datetime.now() + timedelta(days=5)

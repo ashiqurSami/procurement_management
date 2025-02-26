@@ -89,8 +89,7 @@
                         <page string="RFQ Lines">
                             <field name="rfq_line_ids"
                                    readonly="status in ('submitted','recommended','accepted','approved')"
-                                   create="status =='draft'"
-                                   delete="status =='draft'">
+                                   options="{'create':0,'delete':0}">
 
                                 <tree>
                                     <field name="rfp_status" column_invisible="1" />
@@ -127,7 +126,7 @@
                                     </group>
                                     <notebook>
                                         <page string="RFQ Line Products">
-                                            <field name="order_line">
+                                            <field name="order_line" options="{'create':0,'delete':0}">
                                                 <tree>
                                                     <field name="currency_id" column_invisible="1"/>
                                                     <field name="product_id"/>
