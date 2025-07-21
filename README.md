@@ -35,7 +35,7 @@ This project is a comprehensive supplier management system developed as part of 
 1. **Clone the Repository**:
    ```bash
    git clone <repository-url>
-   cd supplier-management-system
+   cd procurement_management
    ```
 
 2. **Build and Run Docker Container**:
@@ -90,11 +90,6 @@ This project is a comprehensive supplier management system developed as part of 
   ```bash
   docker exec -it <container-name> odoo -c /etc/odoo/odoo.conf --test-enable
   ```
-
-## Documentation
-- **Dependency Documentation**: See `docs/dependencies.md` for a detailed list of dependencies and version requirements.
-- **Installation Guide**: Refer to `docs/installation.md` for step-by-step setup instructions.
-- **User Guide**: Available in `docs/user_guide.md` for detailed feature usage.
 
 ## Notes
 - This project adheres to Odoo’s UI/UX guidelines for consistent design.
